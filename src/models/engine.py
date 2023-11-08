@@ -31,6 +31,12 @@ class Engine:
     def config_engine_mode(self, list_engine_mode_name:list[str|int], list_engine_mode_base_reliability_percent_loss_per_lap:list[int|float], list_engine_mode_base_maximum_horsepower:list[int|float], list_engine_mode_fuel_volume_consuming_kg_per_lap:list[int|float], list_engine_mode_temperature_celcius:list[int|float]):
         assert len(set([len(list_engine_mode_name), len(list_engine_mode_base_reliability_percent_loss_per_lap), len(list_engine_mode_base_maximum_horsepower), len(list_engine_mode_fuel_volume_consuming_kg_per_lap), len(list_engine_mode_temperature_celcius)]))==1
 
+        self.list_engine_mode_name=list_engine_mode_name
+        self.list_engine_mode_base_reliability_percent_loss_per_lap=list_engine_mode_base_reliability_percent_loss_per_lap
+        self.list_engine_mode_base_maximum_horsepower=list_engine_mode_base_maximum_horsepower
+        self.list_engine_mode_fuel_volume_consuming_kg_per_lap=list_engine_mode_fuel_volume_consuming_kg_per_lap
+        self.list_engine_mode_temperature_celcius=list_engine_mode_temperature_celcius
+
     def set_engine_mode(self,engine_mode_name:int|str):
         assert engine_mode_name in self.list_engine_mode_name
 
