@@ -31,14 +31,15 @@ class TestEngine:
         assert self.engine.engine_fuel_volume_kg==fuel_volume_kg
 
     def test_decrease_fuel_volume_negative(self):
+        self.test_set_init_fuel_volume()
         diff_fuel_volume_kg=-10000
 
         with pytest.raises(Exception) as e:
             self.engine.decrease_fuel_volume(diff_fuel_volume_kg)
 
     def test_decrease_fuel_volume(self):
-        fuel_volume_kg=100
-        self.engine.set_init_fuel_volume(fuel_volume_kg)
+        self.test_set_init_fuel_volume()
+        fuel_volume_kg=self.engine.engine_fuel_volume_kg
         diff_fuel_volume_kg=10
         self.engine.decrease_fuel_volume(diff_fuel_volume_kg)
 
