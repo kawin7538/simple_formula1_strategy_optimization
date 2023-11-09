@@ -28,7 +28,7 @@ class Engine:
         # dynamic memory
         self.engine_temperature_memory_celcius=deque(maxlen=MEMORY_SIZE)
 
-    def config_engine_mode(self, list_engine_mode_name:list[str|int], list_engine_mode_base_reliability_percent_loss_per_lap:list[int|float], list_engine_mode_base_maximum_horsepower:list[int|float], list_engine_mode_fuel_volume_consuming_kg_per_lap:list[int|float], list_engine_mode_temperature_celcius:list[int|float]):
+    def init_engine_mode(self, list_engine_mode_name:list[str|int], list_engine_mode_base_reliability_percent_loss_per_lap:list[int|float], list_engine_mode_base_maximum_horsepower:list[int|float], list_engine_mode_fuel_volume_consuming_kg_per_lap:list[int|float], list_engine_mode_temperature_celcius:list[int|float]):
         assert len(set([len(list_engine_mode_name), len(list_engine_mode_base_reliability_percent_loss_per_lap), len(list_engine_mode_base_maximum_horsepower), len(list_engine_mode_fuel_volume_consuming_kg_per_lap), len(list_engine_mode_temperature_celcius)]))==1
 
         self.list_engine_mode_name=list_engine_mode_name
