@@ -1,6 +1,6 @@
 from collections import deque
 
-MEMORY_SIZE=3
+MEMORY_SIZE=5
 
 class Engine:
     def __init__(self) -> None:
@@ -65,6 +65,9 @@ class Engine:
     def measure_engine_temperature(self):
         self.engine_temperature_memory_celcius.append(self.engine_temperature_celcius)
         self.engine_temperature_celcius=(sum(self.engine_temperature_memory_celcius)+self.engine_mode_temperature_celcius)/(len(self.engine_temperature_memory_celcius)+1)
+
+    def measure_engine_horsepower(self):
+        self.engine_horsepower=self.engine_mode_base_maximum_horsepower-0.35*(100-self.engine_reliability_percent)*self.engine_mode_base_maximum_horsepower
 
     def is_usable(self):
         return self.engine_reliability_percent>0 and self.engine_fuel_volume_kg>0

@@ -1,3 +1,4 @@
+# first mode of engine and brake should be lowest on performance, and first set of tyre should be soft
 DICT_ENGINE_MODE={
     'list_engine_mode_name':[
         
@@ -18,7 +19,9 @@ DICT_ENGINE_MODE={
 
 DICT_TYRE_SET={
     'list_tyre_set_name':[
-
+        'Soft',
+        'Medium',
+        'Hard'
     ],
     'list_tyre_set_base_reliability_percent_loss_per_lap':[
 
