@@ -13,3 +13,5 @@ class Car:
         self.brakes=Brakes()
 
         self.engine.init_engine_mode(**DICT_ENGINE_MODE)
+        self.tyres.init_tyre_set(**DICT_TYRE_SET)
+        self.brakes.init_brake_mode(**DICT_BRAKE_MODE)
