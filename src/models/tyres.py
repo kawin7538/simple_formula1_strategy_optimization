@@ -45,6 +45,11 @@ class Tyres:
         self.tyre_set_optimal_temperature_celcius=self.list_tyre_set_optimal_temperature_celcius[tyre_set_idx]
         self.tyre_set_relative_speed_loss_km_hr=self.list_tyre_set_relative_speed_loss_km_hr[tyre_set_idx]
 
+    def reset_tyre_stat(self):
+        self.tyre_reliability_percent=100
+        self.tyre_temperature_celcius=self.tyre_set_optimal_temperature_celcius
+        self.tyre_temperature_memory_celcius=deque(maxlen=MEMORY_SIZE)
+
     def decrease_tyre_reliability(self, diff_tyre_reliability_percent:int|float):
         assert diff_tyre_reliability_percent>=0
 
