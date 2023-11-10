@@ -56,7 +56,7 @@ class Car:
             temp_car_speed_km_hr=temp_car_speed_km_hr-self.tyres.tyre_relative_speed_loss_km_hr
 
             # speed decoration from brake pressure, equation were mocked up
-            diff_speed_ratio_from_brake=0.5837*math.log(self.brakes.brake_pressure_psi)-4.3773
+            diff_speed_ratio_from_brake=-(0.5837*math.log(self.brakes.brake_pressure_psi)-4.3773)
             temp_car_speed_km_hr=temp_car_speed_km_hr*(1-diff_speed_ratio_from_brake)
 
             # speed decoration from overall weights

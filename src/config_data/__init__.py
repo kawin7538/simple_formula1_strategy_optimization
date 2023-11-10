@@ -1,19 +1,54 @@
 # first mode of engine and brake should be lowest on performance, and first set of tyre should be soft
 DICT_ENGINE_MODE={
     'list_engine_mode_name':[
-        
+        'Neutral',
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        'Full',
     ],
     'list_engine_mode_base_reliability_percent_loss_per_lap':[
-
+        0.05,
+        1,
+        1.35,
+        1.95,
+        2.3,
+        2.9,
+        4.1,
+        10,
     ],
     'list_engine_mode_base_maximum_horsepower':[
-
+        130,
+        350,
+        410,
+        490,
+        570,
+        680,
+        720,
+        760,
     ],
     'list_engine_mode_fuel_volume_consuming_kg_per_lap':[
-
+        0.5,
+        1.3,
+        1.5,
+        1.7,
+        1.9,
+        2.2,
+        2.5,
+        3,
     ],
     'list_engine_mode_temperature_celcius':[
-
+        300,
+        890,
+        1105,
+        1200,
+        1700,
+        1950,
+        2200,
+        2600,
     ],
 }
 
@@ -24,27 +59,93 @@ DICT_TYRE_SET={
         'Hard'
     ],
     'list_tyre_set_base_reliability_percent_loss_per_lap':[
-
+        5.31,
+        4.25,
+        3.86,
     ],
     'list_tyre_set_optimal_temperature_celcius':[
-
+        100,
+        115,
+        132,
     ],
     'list_tyre_set_relative_speed_loss_km_hr':[
-
+        0,
+        4.5,
+        6.8
     ]
 }
 
 DICT_BRAKE_MODE={
     'list_brake_mode_name':[
-
+        'Neutral',
+        'Warm',
+        'Fly',
+        1,
+        2,
+        3,
+        4,
+        5,
+        'PitEntry',
+        'PitExit',
+        6,
+        7,
+        8,
+        9,
+        'Def',
+        'Full',
     ],
     'list_brake_mode_base_brake_pressure_psi':[
-
+        800,
+        1000,
+        950,
+        1100,
+        1150,
+        1200,
+        1250,
+        1300,
+        900,
+        850,
+        1400,
+        1450,
+        1500,
+        1600,
+        1750,
+        2000,
     ],
     'list_brake_mode_base_brake_temperature_celcius':[
-
+        300,
+        800,
+        450,
+        500,
+        525,
+        550,
+        575,
+        600,
+        350,
+        425,
+        625,
+        650,
+        675,
+        689,
+        750,
+        1000,
     ],
     'list_brake_mode_base_reliability_percent_loss_per_lap':[
-        
+        0.25,
+        6.54,
+        2.25,
+        3.00,
+        3.15,
+        3.30,
+        3.45,
+        3.60,
+        1.25,
+        1.28,
+        2.5,
+        4.15,
+        4.3,
+        4.75,
+        7.49,
+        15
     ]
 }
