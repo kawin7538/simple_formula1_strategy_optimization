@@ -44,7 +44,7 @@ class F1Simulation:
             if self.list_tyre_setting_all_laps[i]!=self.list_tyre_setting_all_laps[i+1]:
                 self.list_car_status_will_be_pit[i]=True
 
-    def race(self):
+    def race(self, verbose=False):
         assert None not in self.list_tyre_setting_all_laps
         assert None not in self.list_engine_setting_all_stopwatches
         assert None not in self.list_brake_setting_all_stopwatches
@@ -55,10 +55,6 @@ class F1Simulation:
         
         for lap_idx in range(self.number_of_laps):
             for stopwatch_idx in range(self.racetrack.num_stopwatch):
-                if not self.car.is_drivable():
-                    self.dnf=True
-                    print("DNF")
-                    return;
                 # overall steps for each stopwatch section
                 # set engine mode
                 self.car.set_engine_mode(self.list_engine_setting_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx])
@@ -76,8 +72,16 @@ class F1Simulation:
                 self.car.brakes.measure_brake_pressure()
                 # measure car tyre speed loss
                 self.car.tyres.calculate_tyre_relative_speed_loss()
+                # check condition before retire or something
+                if not self.car.is_drivable():
+                    self.dnf=True
+                    print("DNF")
+                    print(lap_idx)
+                    return;
                 # measure car speed due to pit lane condition
                 self.car.measure_car_speed()
+                if self.car.tyres.tyre_reliability_percent==0:
+                    self.car.car_speed_km_hr+=(self.car.tyres.tyre_set_laptime_loss_per_lap_zero_reliability_seconds/self.racetrack.num_stopwatch)
                 self.list_car_speed_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.car_speed_km_hr
                 # measure time usage
                 self.list_time_usage_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=(self.racetrack.distance_km/self.racetrack.num_stopwatch)/self.car.car_speed_km_hr*3600

@@ -1,6 +1,6 @@
 from collections import deque
 
-MEMORY_SIZE=5
+MEMORY_SIZE=28*5
 
 class Tyres:
     def __init__(self) -> None:

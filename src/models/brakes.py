@@ -1,6 +1,6 @@
 from collections import deque
 
-MEMORY_SIZE=10
+MEMORY_SIZE=28*10
 
 class Brakes:
     def __init__(self) -> None:
@@ -56,4 +56,4 @@ class Brakes:
         self.brake_temperature_celcius=(sum(self.brake_temperature_memory_celcius)+self.brake_mode_base_brake_temperature_celcius)/(len(self.brake_temperature_memory_celcius)+1)
 
     def is_usable(self):
-        return self.brake_reliability_percent>0
+        return self.brake_reliability_percent>0 and self.brake_pressure_psi>0
