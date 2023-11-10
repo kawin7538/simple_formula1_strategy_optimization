@@ -1,4 +1,5 @@
 from typing import Literal
+from datetime import timedelta
 
 from models.car import Car
 from models.racetrack import RaceTrack
@@ -50,24 +51,42 @@ class F1Simulation:
 
         self.car.set_tyre_set(self.list_tyre_setting_all_laps[0])
         self.car.tyres.reset_tyre_stat()
+        self.car.engine.set_init_fuel_volume(100)
         
         for lap_idx in range(self.number_of_laps):
             for stopwatch_idx in range(self.racetrack.num_stopwatch):
                 if not self.car.is_drivable():
                     self.dnf=True
+                    print("DNF")
                     return;
                 # overall steps for each stopwatch section
                 # set engine mode
+                self.car.set_engine_mode(self.list_engine_setting_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx])
                 # set brake mode
+                self.car.set_brake_mode(self.list_brake_setting_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx])
                 # measure temperature of engine
+                self.car.engine.measure_engine_temperature()
                 # measure temperature of brake
+                self.car.brakes.measure_brake_temperature()
                 # measure temperature of tyres
+                self.car.tyres.measure_tyre_temperature(self.racetrack.racetrack_temperature_celcius,self.car.brakes.brake_temperature_celcius)
                 # measure car engine horsepower
+                self.car.engine.measure_engine_horsepower()
                 # measure car brake pressure
+                self.car.brakes.measure_brake_pressure()
                 # measure car tyre speed loss
+                self.car.tyres.calculate_tyre_relative_speed_loss()
                 # measure car speed due to pit lane condition
+                self.car.measure_car_speed()
+                self.list_car_speed_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.car_speed_km_hr
                 # measure time usage
+                self.list_time_usage_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=(self.racetrack.distance_km/self.racetrack.num_stopwatch)/self.car.car_speed_km_hr*3600
                 # decrease reliability of engine
+                self.car.engine.decrease_engine_reliability(self.car.engine.engine_mode_base_reliability_percent_loss_per_lap/self.racetrack.num_stopwatch)
                 # decrease reliability of brake
+                self.car.brakes.decrease_brake_reliability(self.car.brakes.brake_mode_base_reliability_percent_loss_per_lap/self.racetrack.num_stopwatch)
                 # decrease reliability of tyres
+                self.car.tyres.decrease_tyre_reliability(self.car.tyres.tyre_set_base_reliability_percent_loss_per_lap/self.racetrack.num_stopwatch)
+                # decrease engine fuel
+                self.car.engine.decrease_fuel_volume(self.car.engine.engine_mode_fuel_volume_consuming_kg_per_lap/self.racetrack.num_stopwatch)
                 # car moved to next stopwatch, repeat these steps until chequered flag or dnf
