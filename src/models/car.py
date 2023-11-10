@@ -47,7 +47,7 @@ class Car:
         # diff_speed_ratio_from_brake ~ 1+ln(brake_pressure_psi)
         # or speed is constantly set to pitlane speed
 
-        if self.car_pit_lane_mode=="OFF":
+        if self.car_pitlane_mode=="OFF":
             # base speed from engine, equation were mocked up
             engine_rpm=1201.3*math.log(self.engine.engine_horsepower)+6021.7
             temp_car_speed_km_hr=(5e-7*engine_rpm*engine_rpm+0.0167*engine_rpm-17.559)
@@ -56,11 +56,11 @@ class Car:
             temp_car_speed_km_hr=temp_car_speed_km_hr-self.tyres.tyre_relative_speed_loss_km_hr
 
             # speed decoration from brake pressure, equation were mocked up
-            diff_speed_ratio_from_brake=-(0.5837*math.log(self.brakes.brake_pressure_psi)-4.3773)
+            diff_speed_ratio_from_brake=max(-0.65*(0.5837*math.log(self.brakes.brake_pressure_psi)-4.3773),0)
             temp_car_speed_km_hr=temp_car_speed_km_hr*(1-diff_speed_ratio_from_brake)
 
             # speed decoration from overall weights
-            self.car_speed_km_hr=temp_car_speed_km_hr-0.005*(self.base_weight_kg+self.engine.engine_fuel_volume_kg)
+            self.car_speed_km_hr=temp_car_speed_km_hr-0.001*(self.base_weight_kg+self.engine.engine_fuel_volume_kg)
 
         else:
             self.car_speed_km_hr=self.car_speed_km_hr_at_pitlane
