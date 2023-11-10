@@ -29,7 +29,7 @@ DICT_TYRE_SET={
     'list_tyre_set_optimal_temperature_celcius':[
 
     ],
-    'list_tyre_set_laptime_loss_per_lap_seconds':[
+    'list_tyre_set_relative_speed_loss_km_hr':[
 
     ]
 }
