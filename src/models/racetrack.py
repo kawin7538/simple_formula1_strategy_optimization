@@ -6,6 +6,7 @@ class RaceTrack:
         
         # static property
         self.distance_km=4.657
+        self.racetrack_temperature_celcius=25
         # assume equal distance between stopwatch
         self.num_stopwatch=28
         self.list_sector_start_stopwatch=[0,10,19]
