@@ -1,5 +1,7 @@
 from typing import Literal
 from datetime import timedelta
+from rich.console import Console
+from rich.table import Table
 
 from models.car import Car
 from models.racetrack import RaceTrack
@@ -23,6 +25,14 @@ class F1Simulation:
         # dynamic memory simulated from user's input
         self.list_time_usage_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_car_speed_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
+        self.list_tyre_temperature_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
+        self.list_tyre_reliability_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
+        self.list_engine_temperature_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
+        self.list_engine_horsepower_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
+        self.list_engine_reliability_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
+        self.list_brake_temperature_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
+        self.list_brake_pressure_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
+        self.list_brake_reliability_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_car_status_will_be_pit=[False]*(number_of_laps-1)
         self.car_in_pitlane=False
         self.dnf=False
@@ -44,7 +54,7 @@ class F1Simulation:
             if self.list_tyre_setting_all_laps[i]!=self.list_tyre_setting_all_laps[i+1]:
                 self.list_car_status_will_be_pit[i]=True
 
-    def race(self, verbose=False):
+    def race(self):
         assert None not in self.list_tyre_setting_all_laps
         assert None not in self.list_engine_setting_all_stopwatches
         assert None not in self.list_brake_setting_all_stopwatches
@@ -62,35 +72,61 @@ class F1Simulation:
                 self.car.set_brake_mode(self.list_brake_setting_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx])
                 # measure temperature of engine
                 self.car.engine.measure_engine_temperature()
+                self.list_engine_temperature_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.engine.engine_temperature_celcius
                 # measure temperature of brake
                 self.car.brakes.measure_brake_temperature()
+                self.list_brake_temperature_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.brakes.brake_temperature_celcius
                 # measure temperature of tyres
                 self.car.tyres.measure_tyre_temperature(self.racetrack.racetrack_temperature_celcius,self.car.brakes.brake_temperature_celcius)
+                self.list_tyre_temperature_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.tyres.tyre_temperature_celcius
                 # measure car engine horsepower
                 self.car.engine.measure_engine_horsepower()
+                self.list_engine_horsepower_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.engine.engine_horsepower
                 # measure car brake pressure
                 self.car.brakes.measure_brake_pressure()
+                self.list_brake_pressure_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.brakes.brake_pressure_psi
                 # measure car tyre speed loss
                 self.car.tyres.calculate_tyre_relative_speed_loss()
                 # check condition before retire or something
                 if not self.car.is_drivable():
                     self.dnf=True
-                    print("DNF")
-                    print(lap_idx)
                     return;
+                # to check whether it's meet condition of pitlane
+                # if it's lap of in pitlane
+                if lap_idx<self.number_of_laps-1 and self.list_car_status_will_be_pit[lap_idx]==True:
+                    if self.car_in_pitlane==False and stopwatch_idx==self.racetrack.start_end_pitlane_stopwatch[0]:
+                        self.car_in_pitlane=True
+                        self.car.set_car_pitlane_mode("ON")
+                elif lap_idx<self.number_of_laps-1:
+                    if self.car_in_pitlane==True and stopwatch_idx==0:
+                        self.car.set_tyre_set(self.list_tyre_setting_all_laps[lap_idx])
+                        self.car.tyres.reset_tyre_stat()
+                    elif self.car_in_pitlane==True and stopwatch_idx==self.racetrack.start_end_pitlane_stopwatch[1]:
+                        self.car_in_pitlane=False
+                        self.car.set_car_pitlane_mode("OFF")
+                        
                 # measure car speed due to pit lane condition
                 self.car.measure_car_speed()
                 if self.car.tyres.tyre_reliability_percent==0:
                     self.car.car_speed_km_hr+=(self.car.tyres.tyre_set_laptime_loss_per_lap_zero_reliability_seconds/self.racetrack.num_stopwatch)
                 self.list_car_speed_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.car_speed_km_hr
+                # judge all driving that contains speed==0 as DNF
+                if self.car.car_speed_km_hr<=0:
+                    self.dnf=True
+                    return;
                 # measure time usage
                 self.list_time_usage_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=(self.racetrack.distance_km/self.racetrack.num_stopwatch)/self.car.car_speed_km_hr*3600
+                if self.car_in_pitlane==True and stopwatch_idx==0:
+                    self.list_time_usage_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]+=2
                 # decrease reliability of engine
                 self.car.engine.decrease_engine_reliability(self.car.engine.engine_mode_base_reliability_percent_loss_per_lap/self.racetrack.num_stopwatch)
+                self.list_engine_reliability_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.engine.engine_reliability_percent
                 # decrease reliability of brake
                 self.car.brakes.decrease_brake_reliability(self.car.brakes.brake_mode_base_reliability_percent_loss_per_lap/self.racetrack.num_stopwatch)
+                self.list_brake_reliability_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.brakes.brake_reliability_percent
                 # decrease reliability of tyres
                 self.car.tyres.decrease_tyre_reliability(self.car.tyres.tyre_set_base_reliability_percent_loss_per_lap/self.racetrack.num_stopwatch)
+                self.list_tyre_reliability_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.tyres.tyre_reliability_percent
                 # decrease engine fuel
                 self.car.engine.decrease_fuel_volume(self.car.engine.engine_mode_fuel_volume_consuming_kg_per_lap/self.racetrack.num_stopwatch)
                 # car moved to next stopwatch, repeat these steps until chequered flag or dnf
