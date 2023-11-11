@@ -58,7 +58,7 @@ class Tyres:
     def measure_tyre_temperature(self, track_temperature_celcius:int|float, brake_temperature_celcius:int|float):
         # calculate tyre temperature based on track temperature, brake temperature, and memory of tyre temperature
         self.tyre_temperature_memory_celcius.append(self.tyre_temperature_celcius)
-        temp_pure_tyre_temperature_celcius=(self.tyre_set_optimal_temperature_celcius+track_temperature_celcius+1*brake_temperature_celcius)/3
+        temp_pure_tyre_temperature_celcius=(self.tyre_set_optimal_temperature_celcius+track_temperature_celcius+0.25*brake_temperature_celcius)/3
         self.tyre_temperature_celcius=(sum(self.tyre_temperature_memory_celcius)+temp_pure_tyre_temperature_celcius)/(len(self.tyre_temperature_memory_celcius)+1)
 
     def calculate_tyre_relative_speed_loss(self):

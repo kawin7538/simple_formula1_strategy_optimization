@@ -156,6 +156,42 @@ class F1Simulation:
         # return total seconds on this race, or 1e8 in case of DNF or violate any rules
         if self.dnf:
             return 1e9
-        if len(set(self.list_tyre_setting_all_laps))<2:
-            return 1e9
+        # if len(set(self.list_tyre_setting_all_laps))<2:
+        #     return 1e9
         return sum(self.list_time_usage_all_stopwatches)
+    
+    def get_count_pitstop(self):
+        return sum(self.list_car_status_will_be_pit)
+    
+    def get_count_engine_set(self):
+        # list_engine_setting_all_stopwatches
+        answer=0
+        for i in range(self.number_of_laps*self.racetrack.num_stopwatch-1):
+            if self.list_engine_setting_all_stopwatches[i]!=self.list_engine_setting_all_stopwatches[i+1]:
+                answer+=1
+        return answer
+    
+    def get_count_brake_set(self):
+        answer=0
+        for i in range(self.number_of_laps*self.racetrack.num_stopwatch-1):
+            if self.list_brake_setting_all_stopwatches[i]!=self.list_brake_setting_all_stopwatches[i+1]:
+                answer+=1
+        return answer
+    
+    def get_engine_reliability(self):
+        return self.car.engine.engine_reliability_percent
+    
+    def get_brake_reliability(self):
+        return self.car.brakes.brake_reliability_percent
+    
+    def get_engine_fuel_percent(self):
+        return self.car.engine.engine_fuel_volume_kg
+    
+    def get_count_blank_stopwatch(self):
+        return sum([1 for val in self.list_time_usage_all_stopwatches if val==None])
+    
+    def get_penalty_score(self):
+        if self.dnf:
+            return self.get_count_blank_stopwatch()
+        else:
+            return self.get_count_pitstop()+self.get_count_engine_set()/self.racetrack.num_stopwatch+self.get_count_brake_set()/self.racetrack.num_stopwatch

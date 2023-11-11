@@ -1,7 +1,8 @@
 from typing import List, Tuple, Union
 from copy import deepcopy
 from mealpy import Problem, BoolVar, StringVar, MixedSetVar
-from mealpy.swarm_based.GWO import GWO_WOA
+from mealpy.swarm_based.GWO import GWO_WOA, IGWO, OriginalGWO
+from mealpy.swarm_based.PSO import HPSO_TVAC
 
 from models.car import Car
 from models.racetrack import RaceTrack
@@ -24,7 +25,8 @@ class F1OptimizationProblem(Problem):
         x_decoded=self.decode_solution(x)
         f1_simulation.initialize_setting(x_decoded['list_tyre_setting_all_laps'],x_decoded['list_car_status_will_be_pit'],x_decoded['list_engine_setting_all_stopwatches'],x_decoded['list_brake_setting_all_stopwatches'])
         f1_simulation.race()
-        return f1_simulation.score()
+        # return [f1_simulation.score(),f1_simulation.get_count_pitstop(),f1_simulation.get_count_engine_set(),f1_simulation.get_count_brake_set(),100-f1_simulation.get_engine_reliability(),100-f1_simulation.get_brake_reliability(),100-f1_simulation.get_engine_fuel_percent(),f1_simulation.get_count_blank_stopwatch()]
+        return [f1_simulation.score(),f1_simulation.get_penalty_score()]
     
 my_bounds=[
     # ListStringVar list_tyre_setting_all_laps,
@@ -36,8 +38,9 @@ my_bounds=[
     MixedSetVar(valid_sets=(car.brakes.list_brake_mode_name,)*(NUMBER_OF_LAPS*racetrack.num_stopwatch),name='list_brake_setting_all_stopwatches'),
 ]
 
-problem=F1OptimizationProblem(bound=my_bounds,minmax='min',car=car,racetrack=racetrack,number_of_laps=NUMBER_OF_LAPS)
-model=GWO_WOA(epoch=3000,pop_size=300)
+# problem=F1OptimizationProblem(bound=my_bounds,minmax='min',car=car,racetrack=racetrack,number_of_laps=NUMBER_OF_LAPS, obj_weights=[1,1,1,1,1,1,1,1])
+problem=F1OptimizationProblem(bound=my_bounds,minmax='min',car=car,racetrack=racetrack,number_of_laps=NUMBER_OF_LAPS, obj_weights=[1,1])
+model=HPSO_TVAC(epoch=3000,pop_size=300)
 model.solve(problem,mode='thread',n_workers=8)
 
 print(f"Best agent: {model.g_best}")
