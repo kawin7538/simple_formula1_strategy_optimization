@@ -118,6 +118,9 @@ class F1Simulation:
                     if self.car_in_pitlane==False and stopwatch_idx==self.racetrack.start_end_pitlane_stopwatch[0]:
                         self.car_in_pitlane=True
                         self.car.set_car_pitlane_mode("ON")
+                    elif self.car_in_pitlane==True and stopwatch_idx==self.racetrack.start_end_pitlane_stopwatch[1]:
+                        self.car_in_pitlane=False
+                        self.car.set_car_pitlane_mode("OFF")
                 elif lap_idx<self.number_of_laps-1:
                     if self.car_in_pitlane==True and stopwatch_idx==0:
                         self.car.set_tyre_set(self.list_tyre_setting_all_laps[lap_idx])
