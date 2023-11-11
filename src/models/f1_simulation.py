@@ -33,19 +33,22 @@ class F1Simulation:
         self.list_brake_temperature_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_pressure_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_reliability_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
-        self.list_car_status_will_be_pit=[False]*(number_of_laps-1)
+        self.list_car_status_will_be_pit=[None]*(number_of_laps-1)
         self.car_in_pitlane=False
         self.dnf=False
 
-    def initialize_setting(self, list_tyre_setting_all_laps:list, list_engine_setting_all_stopwatches:list, list_brake_setting_all_stopwatches:list):
+    def initialize_setting(self, list_tyre_setting_all_laps:list, list_car_status_will_be_pit:list, list_engine_setting_all_stopwatches:list, list_brake_setting_all_stopwatches:list):
         assert len(self.list_tyre_setting_all_laps)==len(list_tyre_setting_all_laps)
+        assert len(self.list_car_status_will_be_pit)==len(list_car_status_will_be_pit)
         assert len(self.list_engine_setting_all_stopwatches)==len(list_engine_setting_all_stopwatches)
         assert len(self.list_brake_setting_all_stopwatches)==len(list_brake_setting_all_stopwatches)
         assert None not in list_tyre_setting_all_laps
+        assert None not in list_car_status_will_be_pit
         assert None not in list_engine_setting_all_stopwatches
         assert None not in list_brake_setting_all_stopwatches
 
         self.list_tyre_setting_all_laps=list_tyre_setting_all_laps
+        self.list_car_status_will_be_pit=list_car_status_will_be_pit
         self.list_engine_setting_all_stopwatches=list_engine_setting_all_stopwatches
         self.list_brake_setting_all_stopwatches=list_brake_setting_all_stopwatches
 
@@ -132,6 +135,7 @@ class F1Simulation:
                 # car moved to next stopwatch, repeat these steps until chequered flag or dnf
 
     def score(self):
+        # return total seconds on this race, or 1e8 in case of DNF or violate any rules
         if self.dnf:
-            return timedelta(seconds=1e8)
-        return timedelta(seconds=sum(self.list_time_usage_all_stopwatches))
+            return 1e8
+        return sum(self.list_time_usage_all_stopwatches)
