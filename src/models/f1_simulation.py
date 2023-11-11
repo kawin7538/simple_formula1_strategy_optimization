@@ -156,6 +156,6 @@ class F1Simulation:
         # return total seconds on this race, or 1e8 in case of DNF or violate any rules
         if self.dnf:
             return 1e9
-        if set(self.list_tyre_setting_all_laps)<2:
+        if len(set(self.list_tyre_setting_all_laps))<2:
             return 1e9
         return sum(self.list_time_usage_all_stopwatches)

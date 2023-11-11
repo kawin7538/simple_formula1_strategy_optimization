@@ -37,7 +37,7 @@ my_bounds=[
 ]
 
 problem=F1OptimizationProblem(bound=my_bounds,minmax='min',car=car,racetrack=racetrack,number_of_laps=NUMBER_OF_LAPS)
-model=GWO_WOA(epoch=3000,pop_size=100)
+model=GWO_WOA(epoch=3000,pop_size=300)
 model.solve(problem,mode='thread',n_workers=8)
 
 print(f"Best agent: {model.g_best}")
