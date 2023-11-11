@@ -130,3 +130,8 @@ class F1Simulation:
                 # decrease engine fuel
                 self.car.engine.decrease_fuel_volume(self.car.engine.engine_mode_fuel_volume_consuming_kg_per_lap/self.racetrack.num_stopwatch)
                 # car moved to next stopwatch, repeat these steps until chequered flag or dnf
+
+    def score(self):
+        if self.dnf:
+            return timedelta(seconds=1e8)
+        return timedelta(seconds=sum(self.list_time_usage_all_stopwatches))
