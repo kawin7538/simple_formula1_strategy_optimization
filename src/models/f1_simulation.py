@@ -19,6 +19,7 @@ class F1Simulation:
 
         # dynamic property which will be set from user
         self.list_tyre_setting_all_laps=[None]*number_of_laps
+        self.list_car_status_will_be_pit=[None]*(number_of_laps-1)
         self.list_engine_setting_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_setting_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
 
@@ -33,7 +34,6 @@ class F1Simulation:
         self.list_brake_temperature_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_pressure_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_reliability_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
-        self.list_car_status_will_be_pit=[None]*(number_of_laps-1)
         self.car_in_pitlane=False
         self.dnf=False
 
@@ -57,10 +57,28 @@ class F1Simulation:
             if self.list_tyre_setting_all_laps[i]!=self.list_tyre_setting_all_laps[i+1]:
                 self.list_car_status_will_be_pit[i]=True
 
+    def reset_memory(self):
+        # dynamic memory simulated from user's input
+        self.list_time_usage_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.list_car_speed_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.list_tyre_temperature_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.list_tyre_reliability_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.list_engine_temperature_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.list_engine_horsepower_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.list_engine_reliability_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.list_brake_temperature_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.list_brake_pressure_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.list_brake_reliability_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.car_in_pitlane=False
+        self.dnf=False
+
     def race(self):
         assert None not in self.list_tyre_setting_all_laps
+        assert None not in self.list_car_status_will_be_pit
         assert None not in self.list_engine_setting_all_stopwatches
         assert None not in self.list_brake_setting_all_stopwatches
+
+        self.reset_memory()
 
         self.car.set_tyre_set(self.list_tyre_setting_all_laps[0])
         self.car.tyres.reset_tyre_stat()
@@ -137,5 +155,7 @@ class F1Simulation:
     def score(self):
         # return total seconds on this race, or 1e8 in case of DNF or violate any rules
         if self.dnf:
+            return 1e8
+        if set(self.list_tyre_setting_all_laps)<2:
             return 1e8
         return sum(self.list_time_usage_all_stopwatches)
