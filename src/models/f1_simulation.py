@@ -197,4 +197,4 @@ class F1Simulation:
         if self.dnf:
             return self.get_count_blank_stopwatch()
         else:
-            return 0
+            return self.get_engine_reliability()+self.get_brake_reliability()+self.get_engine_fuel_percent()
