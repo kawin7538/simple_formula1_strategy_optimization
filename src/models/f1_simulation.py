@@ -159,8 +159,8 @@ class F1Simulation:
         # return total seconds on this race, or 1e8 in case of DNF or violate any rules
         if self.dnf:
             return 1e9
-        # if len(set(self.list_tyre_setting_all_laps))<2:
-        #     return 1e9
+        if len(set(self.list_tyre_setting_all_laps))<2:
+            return 1e9+10*self.racetrack.num_stopwatch
         return sum(self.list_time_usage_all_stopwatches)
     
     def get_count_pitstop(self):
@@ -197,4 +197,4 @@ class F1Simulation:
         if self.dnf:
             return self.get_count_blank_stopwatch()
         else:
-            return self.get_count_pitstop()+self.get_count_engine_set()/self.racetrack.num_stopwatch+self.get_count_brake_set()/self.racetrack.num_stopwatch
+            return 0
