@@ -131,8 +131,6 @@ class F1Simulation:
                         
                 # measure car speed due to pit lane condition
                 self.car.measure_car_speed()
-                if self.car.tyres.tyre_reliability_percent==0:
-                    self.car.car_speed_km_hr+=(self.car.tyres.tyre_set_laptime_loss_per_lap_zero_reliability_seconds/self.racetrack.num_stopwatch)
                 self.list_car_speed_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.car_speed_km_hr
                 # judge all driving that contains speed==0 as DNF
                 if self.car.car_speed_km_hr<=0:
@@ -140,6 +138,11 @@ class F1Simulation:
                     return;
                 # measure time usage
                 self.list_time_usage_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=(self.racetrack.distance_km/self.racetrack.num_stopwatch)/self.car.car_speed_km_hr*3600
+                # if tyre reliability got 0%, plus additional time usage on that stopwatch and recalculate for speed
+                if self.car.tyres.tyre_reliability_percent==0:
+                    self.list_time_usage_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]+=(self.car.tyres.tyre_set_laptime_loss_per_lap_zero_reliability_seconds/self.racetrack.num_stopwatch)
+                    self.car.car_speed_km_hr=(self.racetrack.distance_km/self.racetrack.num_stopwatch)/(self.list_time_usage_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]/3600)
+                    self.list_car_speed_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.car_speed_km_hr
                 if self.car_in_pitlane==True and stopwatch_idx==0:
                     self.list_time_usage_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]+=2
                 # decrease reliability of engine
