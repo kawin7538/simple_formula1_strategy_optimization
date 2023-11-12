@@ -40,7 +40,7 @@ my_bounds=[
 
 # problem=F1OptimizationProblem(bound=my_bounds,minmax='min',car=car,racetrack=racetrack,number_of_laps=NUMBER_OF_LAPS, obj_weights=[1,1,1,1,1,1,1,1])
 problem=F1OptimizationProblem(bound=my_bounds,minmax='min',car=car,racetrack=racetrack,number_of_laps=NUMBER_OF_LAPS, obj_weights=[1,1], name='F1OptimizationProblem')
-model=HPSO_TVAC(epoch=1000,pop_size=500)
+model=HPSO_TVAC(epoch=100,pop_size=300)
 model.solve(problem,mode='thread',n_workers=8)
 
 print(f"Best agent: {model.g_best}")
