@@ -156,3 +156,17 @@ class F1SimVisualization:
             showlegend=False
         )
         fig.write_image(filepath,width=1600, height=900)
+
+    def plot_package(self,folderpath:str):
+        self.plot_tyre_sequence(folderpath+'/tyre_sequence.png')
+        self.plot_car_speed(folderpath+'/car_speed.png')
+        self.plot_laptime_all_stopwatch(folderpath+'/laptime_all_stopwatch.png')
+        self.plot_engine_horsepower_all_stopwatch(folderpath+"/engine_horsepower_all_stopwatch.png")
+        self.plot_engine_reliability_all_stopwatch(folderpath+"/engine_reliability_all_stopwatch.png")
+        self.plot_fuel_level_all_stopwatch(folderpath+"/engine_fuel_level_all_stopwatch.png")
+        self.plot_engine_temperature_all_stopwatch(folderpath+"/engine_temperature_all_stopwatch.png")
+        self.plot_brake_pressure_all_stopwatch(folderpath+"/brake_pressure_all_stopwatch.png")
+        self.plot_brake_reliability_all_stopwatch(folderpath+"/brake_reliability_all_stopwatch.png")
+        self.plot_brake_temperature_all_stopwatch(folderpath+"/brake_temperature_all_stopwatch.png")
+        self.plot_tyre_reliability_all_stopwatch(folderpath+"/tyre_reliability_all_stopwatch.png")
+        self.plot_tyre_temperature_all_stopwatch(folderpath+"/tyre_temperature_all_stopwatch.png")
