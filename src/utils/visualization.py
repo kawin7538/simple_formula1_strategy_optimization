@@ -138,3 +138,21 @@ class F1SimVisualization:
             showlegend=False
         )
         fig.write_image(filepath,width=1600, height=900)
+
+    def plot_tyre_reliability_all_stopwatch(self,filepath:str):
+        fig=px.line(self.f1_simulation.list_tyre_reliability_all_stopwatches,title='Tyre Reliability for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Tyre Reliability (Percent)',
+            showlegend=False
+        )
+        fig.write_image(filepath,width=1600, height=900)
+
+    def plot_tyre_temperature_all_stopwatch(self,filepath:str):
+        fig=px.line(self.f1_simulation.list_tyre_temperature_all_stopwatches,title='Tyre Temperature for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Tyre Temperature (Celcius)',
+            showlegend=False
+        )
+        fig.write_image(filepath,width=1600, height=900)
