@@ -7,6 +7,7 @@ from mealpy.swarm_based.PSO import HPSO_TVAC
 from models.car import Car
 from models.racetrack import RaceTrack
 from models.f1_simulation import F1Simulation
+from utils.visualization import F1SimVisualization
 
 NUMBER_OF_LAPS=66
 car=Car()
@@ -40,10 +41,18 @@ my_bounds=[
 
 # problem=F1OptimizationProblem(bound=my_bounds,minmax='min',car=car,racetrack=racetrack,number_of_laps=NUMBER_OF_LAPS, obj_weights=[1,1,1,1,1,1,1,1])
 problem=F1OptimizationProblem(bound=my_bounds,minmax='min',car=car,racetrack=racetrack,number_of_laps=NUMBER_OF_LAPS, obj_weights=[1,1], name='F1OptimizationProblem')
-model=HPSO_TVAC(epoch=100,pop_size=300)
-model.solve(problem,mode='thread',n_workers=8)
+model=HPSO_TVAC(epoch=300,pop_size=300)
+model.solve(problem,mode='thread',n_workers=16)
 
 print(f"Best agent: {model.g_best}")
 print(f"Best solution: {model.g_best.solution}")
 print(f"Best accuracy: {model.g_best.target.fitness}")
 print(f"Best parameters: {model.problem.decode_solution(model.g_best.solution)}")
+
+# re-create simulation, run it and visualize it
+dict_decoded_solution=model.problem.decode_solution(model.g_best.solution)
+f1_simulation=F1Simulation(car,racetrack,number_of_laps=66)
+f1_simulation.initialize_setting(dict_decoded_solution['list_tyre_setting_all_laps'],dict_decoded_solution['list_car_status_will_be_pit'],dict_decoded_solution['list_engine_setting_all_stopwatches'],dict_decoded_solution['list_brake_setting_all_stopwatches'])
+f1_simulation.race()
+f1_viz=F1SimVisualization(f1_simulation)
+f1_viz.plot_package("output/best")
