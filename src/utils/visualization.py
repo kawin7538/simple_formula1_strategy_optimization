@@ -28,7 +28,7 @@ class F1SimVisualization:
             'Hard':'White'
         }
 
-        fig=px.bar(data_frame=df_sequences,x='Laps',y='Driver',color='Resource',color_discrete_map=cm, labels={'Resource':'Tyre Compound'})
+        fig=px.bar(data_frame=df_sequences,x='Laps',y='Driver',color='Resource',color_discrete_map=cm, labels={'Resource':'Tyre Compound'}, title='Tyre Sequence for this race')
         fig.update_traces(marker=dict(
             line=dict(
                 color='black'
@@ -43,5 +43,13 @@ class F1SimVisualization:
         fig.write_image(filepath,width=1600, height=900)
 
     def plot_car_speed(self,filepath:str):
-        fig=px.line(self.f1_simulation.list_car_speed_all_stopwatches)
-        fig.write_image(filepath)
+        fig=px.line(self.f1_simulation.list_car_speed_all_stopwatches,title='Car Speed for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Speed (km/hr)',
+            showlegend=False
+        )
+        temp_max_speed=max(self.f1_simulation.list_car_speed_all_stopwatches)
+        temp_max_speed_idx=self.f1_simulation.list_car_speed_all_stopwatches.index(temp_max_speed)
+        fig.add_annotation(text=f"Max Speed: lap {temp_max_speed_idx//self.f1_simulation.racetrack.num_stopwatch+1} at {temp_max_speed:.2f} km/hr",xref="paper", yref="paper",x=1, y=-0.075, showarrow=False, font=dict(color='red'))
+        fig.write_image(filepath,width=1600, height=900)
