@@ -3,6 +3,9 @@ from copy import deepcopy
 from mealpy import Problem, BoolVar, StringVar, MixedSetVar
 from mealpy.swarm_based.GWO import GWO_WOA, IGWO, OriginalGWO
 from mealpy.swarm_based.PSO import HPSO_TVAC
+from mealpy.swarm_based.GTO import Matlab102GTO
+from mealpy.evolutionary_based.ES import Simple_CMA_ES
+from mealpy.math_based.GBO import OriginalGBO
 
 from models.car import Car
 from models.racetrack import RaceTrack
@@ -41,7 +44,7 @@ my_bounds=[
 
 # problem=F1OptimizationProblem(bound=my_bounds,minmax='min',car=car,racetrack=racetrack,number_of_laps=NUMBER_OF_LAPS, obj_weights=[1,1,1,1,1,1,1,1])
 problem=F1OptimizationProblem(bound=my_bounds,minmax='min',car=car,racetrack=racetrack,number_of_laps=NUMBER_OF_LAPS, obj_weights=[1,1], name='F1OptimizationProblem')
-model=HPSO_TVAC(epoch=300,pop_size=300)
+model=HPSO_TVAC(epoch=2,pop_size=300)
 model.solve(problem,mode='thread',n_workers=16)
 
 print(f"Best agent: {model.g_best}")

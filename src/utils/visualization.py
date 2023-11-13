@@ -2,6 +2,7 @@ from datetime import timedelta
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
 from models.f1_simulation import F1Simulation
 
@@ -13,15 +14,6 @@ class F1SimVisualization:
         list_dict_sequences=list()
         latest_tyre=self.f1_simulation.list_tyre_setting_all_laps[0]
         latest_tyre_start=0
-        for i in range(len(self.f1_simulation.list_car_status_will_be_pit)):
-            if self.f1_simulation.list_car_status_will_be_pit[i]==True:
-                list_dict_sequences.append(dict(Driver='Sim',Start=latest_tyre_start+1,Finish=i+1,Resource=latest_tyre))
-                latest_tyre=self.f1_simulation.list_tyre_setting_all_laps[i+1]
-                latest_tyre_start=i
-        list_dict_sequences.append(dict(Driver='Sim',Start=latest_tyre_start+1,Finish=self.f1_simulation.number_of_laps,Resource=latest_tyre))
-
-        df_sequences=pd.DataFrame(list_dict_sequences)
-        df_sequences['Laps']=df_sequences['Finish']-df_sequences['Start']
 
         cm={
             'Soft':'#ED1C24',
@@ -29,18 +21,50 @@ class F1SimVisualization:
             'Hard':'White'
         }
 
-        fig=px.bar(data_frame=df_sequences,x='Laps',y='Driver',color='Resource',color_discrete_map=cm, labels={'Resource':'Tyre Compound'}, title='Tyre Sequence for this race')
-        fig.update_traces(marker=dict(
-            line=dict(
-                color='black'
+        for i in range(len(self.f1_simulation.list_car_status_will_be_pit)):
+            if self.f1_simulation.list_car_status_will_be_pit[i]==True:
+                list_dict_sequences.append(dict(Driver='Sim',Start=latest_tyre_start,Finish=i+1,Resource=latest_tyre,tyre_color=cm[latest_tyre],Laps=i+1-latest_tyre_start))
+                latest_tyre=self.f1_simulation.list_tyre_setting_all_laps[i+1]
+                latest_tyre_start=i+1
+        list_dict_sequences.append(dict(Driver='Sim',Start=latest_tyre_start,Finish=self.f1_simulation.number_of_laps,Resource=latest_tyre,tyre_color=cm[latest_tyre], Laps=self.f1_simulation.number_of_laps-latest_tyre_start))
+
+        # df_sequences=pd.DataFrame(list_dict_sequences)
+        # df_sequences['Laps']=df_sequences['Finish']-df_sequences['Start']
+
+        # fig=px.bar(data_frame=df_sequences,x='Laps',y='Driver',color='Resource',color_discrete_map=cm, labels={'Resource':'Tyre Compound'}, title='Tyre Sequence for this race', orientation='h')
+        # fig.update_traces(marker=dict(
+        #     line=dict(
+        #         color='black'
+        #     )
+        # ))
+        # fig.update_layout(
+        #     plot_bgcolor='#DDDDDD',
+        #     legend=dict(
+        #         orientation="h",
+        #     )
+        # )
+        # fig=go.Figure()
+        bar_traces=[
+            go.Bar(
+                name=dict_sequence['Resource'],
+                x=[dict_sequence['Laps']],y=[dict_sequence['Driver']],orientation='h',base=dict_sequence['Start'],marker_color=dict_sequence['tyre_color'],marker_line_color='black', showlegend=True
             )
-        ))
+            for dict_sequence in list_dict_sequences
+        ]
+        layout = go.Layout(showlegend=True,barmode='stack')
+        fig = go.Figure(data=bar_traces, layout=layout)
         fig.update_layout(
             plot_bgcolor='#DDDDDD',
-            legend=dict(
-                orientation="h",
-            )
         )
+        names = set()
+        fig.for_each_trace(
+            lambda trace:
+                trace.update(showlegend=False)
+                if (trace.name in names) else names.add(trace.name)
+        )
+        # fig.add_trace(
+        #     go.Bar(x=df_sequences['Laps'],y=df_sequences['Driver'],orientation='h',base=df_sequences['Start'],meta=df_sequences['Resource'],marker_color=df_sequences['tyre_color'],marker_line_color='black',showlegend=True)
+        # )
         fig.write_image(filepath,width=1600, height=900)
 
     def plot_car_speed(self,filepath:str):
