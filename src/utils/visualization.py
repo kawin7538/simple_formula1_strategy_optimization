@@ -1,3 +1,4 @@
+from datetime import timedelta
 import numpy as np
 import pandas as pd
 import plotly.express as px
@@ -52,4 +53,22 @@ class F1SimVisualization:
         temp_max_speed=max(self.f1_simulation.list_car_speed_all_stopwatches)
         temp_max_speed_idx=self.f1_simulation.list_car_speed_all_stopwatches.index(temp_max_speed)
         fig.add_annotation(text=f"Max Speed: lap {temp_max_speed_idx//self.f1_simulation.racetrack.num_stopwatch+1} at {temp_max_speed:.2f} km/hr",xref="paper", yref="paper",x=1, y=-0.075, showarrow=False, font=dict(color='red'))
+        fig.write_image(filepath,width=1600, height=900)
+
+    def plot_laptime_all_stopwatch(self,filepath:str):
+        fig=px.line(self.f1_simulation.list_time_usage_all_stopwatches,title='Laptime for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Duration at stopwatch (seconds)',
+            showlegend=False
+        )
+        # calculate elapsed seconds for each lap
+        temp_list_time_elapsed_lap=[0]*self.f1_simulation.number_of_laps
+        for i in range(self.f1_simulation.number_of_laps):
+            for j in range(self.f1_simulation.racetrack.num_stopwatch):
+                temp_list_time_elapsed_lap[i]+=self.f1_simulation.list_time_usage_all_stopwatches[self.f1_simulation.racetrack.num_stopwatch*i+j]
+        temp_min_laptime=min(temp_list_time_elapsed_lap)
+        temp_min_laptime_idx=temp_list_time_elapsed_lap.index(temp_min_laptime)
+        fig.add_annotation(text=f"Fastest Lap: lap {temp_min_laptime_idx+1} at {timedelta(seconds=temp_min_laptime)}",xref="paper", yref="paper",x=1, y=-0.06, showarrow=False, font=dict(color='red'))
+        fig.add_annotation(text=f"Time Elapesed: {timedelta(seconds=sum(self.f1_simulation.list_time_usage_all_stopwatches))}",xref="paper", yref="paper",x=1, y=-0.08, showarrow=False, font=dict(color='red'))
         fig.write_image(filepath,width=1600, height=900)
