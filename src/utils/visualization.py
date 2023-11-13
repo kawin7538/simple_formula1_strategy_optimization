@@ -72,3 +72,42 @@ class F1SimVisualization:
         fig.add_annotation(text=f"Fastest Lap: lap {temp_min_laptime_idx+1} at {timedelta(seconds=temp_min_laptime)}",xref="paper", yref="paper",x=1, y=-0.06, showarrow=False, font=dict(color='red'))
         fig.add_annotation(text=f"Time Elapesed: {timedelta(seconds=sum(self.f1_simulation.list_time_usage_all_stopwatches))}",xref="paper", yref="paper",x=1, y=-0.08, showarrow=False, font=dict(color='red'))
         fig.write_image(filepath,width=1600, height=900)
+
+    def plot_engine_horsepower_all_stopwatch(self,filepath:str):
+        fig=px.line(self.f1_simulation.list_engine_horsepower_all_stopwatches,title='Engine Horsepower for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Engine Horsepower (HP)',
+            showlegend=False
+        )
+        temp_max_engine_horsepower=max(self.f1_simulation.list_engine_horsepower_all_stopwatches)
+        temp_max_engine_horsepower_idx=self.f1_simulation.list_engine_horsepower_all_stopwatches.index(temp_max_engine_horsepower)
+        fig.add_annotation(text=f"Most Horsepower: lap {temp_max_engine_horsepower_idx//self.f1_simulation.racetrack.num_stopwatch+1} at {temp_max_engine_horsepower}",xref="paper", yref="paper",x=1, y=-0.075, showarrow=False, font=dict(color='red'))
+        fig.write_image(filepath,width=1600, height=900)
+
+    def plot_engine_reliability_all_stopwatch(self,filepath:str):
+        fig=px.line(self.f1_simulation.list_engine_reliability_all_stopwatches,title='Engine Reliability for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Engine Reliability (Percent)',
+            showlegend=False
+        )
+        fig.write_image(filepath,width=1600, height=900)
+
+    def plot_fuel_level_all_stopwatch(self,filepath:str):
+        fig=px.line(self.f1_simulation.list_engine_fuel_level_all_stopwatches,title='Engine Fuel Level for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Engine Fuel Level (kg)',
+            showlegend=False
+        )
+        fig.write_image(filepath,width=1600, height=900)
+
+    def plot_engine_temperature_all_stopwatch(self,filepath:str):
+        fig=px.line(self.f1_simulation.list_engine_temperature_all_stopwatches,title='Engine Temperature for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Engine Temperature (Celcius)',
+            showlegend=False
+        )
+        fig.write_image(filepath,width=1600, height=900)

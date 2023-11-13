@@ -31,6 +31,7 @@ class F1Simulation:
         self.list_engine_temperature_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_engine_horsepower_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_engine_reliability_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
+        self.list_engine_fuel_level_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_temperature_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_pressure_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_reliability_all_stopwatches=[None]*(number_of_laps*self.racetrack.num_stopwatch)
@@ -66,6 +67,7 @@ class F1Simulation:
         self.list_engine_temperature_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
         self.list_engine_horsepower_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
         self.list_engine_reliability_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
+        self.list_engine_fuel_level_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_temperature_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_pressure_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
         self.list_brake_reliability_all_stopwatches=[None]*(self.number_of_laps*self.racetrack.num_stopwatch)
@@ -156,6 +158,7 @@ class F1Simulation:
                 self.list_tyre_reliability_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.tyres.tyre_reliability_percent
                 # decrease engine fuel
                 self.car.engine.decrease_fuel_volume(self.car.engine.engine_mode_fuel_volume_consuming_kg_per_lap/self.racetrack.num_stopwatch)
+                self.list_engine_fuel_level_all_stopwatches[self.racetrack.num_stopwatch*lap_idx+stopwatch_idx]=self.car.engine.engine_fuel_volume_kg
                 # car moved to next stopwatch, repeat these steps until chequered flag or dnf
 
     def score(self):
