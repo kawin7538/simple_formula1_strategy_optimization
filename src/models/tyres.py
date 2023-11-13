@@ -63,4 +63,4 @@ class Tyres:
 
     def calculate_tyre_relative_speed_loss(self):
         # tyre_relative_speed_loss ~ base_speed_loss*ratio_to_optimal_temperature+reliability
-        self.tyre_relative_speed_loss_km_hr=self.tyre_set_relative_speed_loss_km_hr*(0.5*abs(self.tyre_temperature_celcius-self.tyre_set_optimal_temperature_celcius))+0.15*(100-self.tyre_reliability_percent)
+        self.tyre_relative_speed_loss_km_hr=self.tyre_set_relative_speed_loss_km_hr*(0.5*abs(self.tyre_temperature_celcius-self.tyre_set_optimal_temperature_celcius))+0.15/2*(100-self.tyre_reliability_percent)
