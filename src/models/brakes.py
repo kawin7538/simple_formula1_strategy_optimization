@@ -49,7 +49,7 @@ class Brakes:
 
     def measure_brake_pressure(self):
         # calculate brake pressure based on based setting, reliability, and temperature
-        self.brake_pressure_psi=max(0,self.brake_mode_base_brake_pressure_psi-0.15/10*(100-self.brake_reliability_percent)*self.brake_mode_base_brake_pressure_psi-1/100*self.brake_temperature_celcius)
+        self.brake_pressure_psi=max(0,self.brake_mode_base_brake_pressure_psi-0.15/30*(100-self.brake_reliability_percent)*self.brake_mode_base_brake_pressure_psi-1/100*self.brake_temperature_celcius)
 
     def measure_brake_temperature(self):
         self.brake_temperature_memory_celcius.append(self.brake_temperature_celcius)

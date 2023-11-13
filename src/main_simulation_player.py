@@ -19,3 +19,6 @@ f1_viz.plot_engine_horsepower_all_stopwatch("output/engine_horsepower_all_stopwa
 f1_viz.plot_engine_reliability_all_stopwatch("output/engine_reliability_all_stopwatch.png")
 f1_viz.plot_fuel_level_all_stopwatch("output/engine_fuel_level_all_stopwatch.png")
 f1_viz.plot_engine_temperature_all_stopwatch("output/engine_temperature_all_stopwatch.png")
+f1_viz.plot_brake_pressure_all_stopwatch("output/brake_pressure_all_stopwatch.png")
+f1_viz.plot_brake_reliability_all_stopwatch("Output/brake_reliability_all_stopwatch.png")
+f1_viz.plot_brake_temperature_all_stopwatch("output/brake_temperature_all_stopwatch.png")

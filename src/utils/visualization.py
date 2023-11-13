@@ -111,3 +111,30 @@ class F1SimVisualization:
             showlegend=False
         )
         fig.write_image(filepath,width=1600, height=900)
+
+    def plot_brake_pressure_all_stopwatch(self,filepath:str):
+        fig=px.line(self.f1_simulation.list_brake_pressure_all_stopwatches,title='Brake Pressure for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Brake Pressure (psi)',
+            showlegend=False
+        )
+        fig.write_image(filepath,width=1600, height=900)
+
+    def plot_brake_reliability_all_stopwatch(self,filepath:str):
+        fig=px.line(self.f1_simulation.list_brake_reliability_all_stopwatches,title='Brake Reliability for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Brake Reliability (Percent)',
+            showlegend=False
+        )
+        fig.write_image(filepath,width=1600, height=900)
+
+    def plot_brake_temperature_all_stopwatch(self,filepath:str):
+        fig=px.line(self.f1_simulation.list_brake_temperature_all_stopwatches,title='Brake Temperature for all stopwatch in this race')
+        fig.update_layout(
+            xaxis_title='number of stopwatch for all laps',
+            yaxis_title='Brake Temperature (Celcius)',
+            showlegend=False
+        )
+        fig.write_image(filepath,width=1600, height=900)
