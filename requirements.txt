@@ -2,3 +2,4 @@ pytest
 mealpy
 plotly
 kaleido
+gymnasium
