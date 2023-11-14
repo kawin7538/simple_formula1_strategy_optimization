@@ -1,5 +1,4 @@
 pytest
-rich
 mealpy
 plotly
 kaleido

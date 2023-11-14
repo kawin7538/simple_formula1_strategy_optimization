@@ -1,6 +1,6 @@
 import pytest
 
-from models.brakes import Brakes
+from models.car_component.brakes import Brakes
 
 class TestBrakes:
     def setup_method(self):

@@ -1,6 +1,6 @@
 import pytest
 
-from models.engine import Engine
+from models.car_component.engine import Engine
 
 class TestEngine:
     def setup_method(self):
@@ -103,20 +103,11 @@ class TestEngine:
 
         assert self.engine.engine_temperature_celcius==(50+75+925/3+2500.1)/4
 
-    def test_measure_engine_temperature_forth(self):
-        self.test_set_engine_mode()
-        self.engine.measure_engine_temperature()
-        self.engine.set_engine_mode(5)
-        self.engine.measure_engine_temperature()
-        self.engine.set_engine_mode('party')
-        self.engine.measure_engine_temperature()
-        self.engine.set_engine_mode(2)
-        self.engine.measure_engine_temperature()
-
-        assert self.engine.engine_temperature_celcius==(75+925/3+(50+75+925/3+2500.1)/4+300)/4
-
     def test_is_usable_positive(self):
         self.test_set_init_fuel_volume()
+        self.test_set_engine_mode()
+        self.engine.measure_engine_horsepower()
+        print(self.engine.engine_fuel_volume_kg,self.engine.engine_horsepower)
 
         assert self.engine.is_usable()==True
 

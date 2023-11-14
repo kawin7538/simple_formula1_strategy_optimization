@@ -1,7 +1,5 @@
 from typing import Literal
 from datetime import timedelta
-from rich.console import Console
-from rich.table import Table
 
 from models.car import Car
 from models.racetrack import RaceTrack

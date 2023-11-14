@@ -1,9 +1,9 @@
 from typing import Literal
 import math
 
-from models.engine import Engine
-from models.tyres import Tyres
-from models.brakes import Brakes
+from models.car_component.engine import Engine
+from models.car_component.tyres import Tyres
+from models.car_component.brakes import Brakes
 
 from config_data import DICT_ENGINE_MODE, DICT_TYRE_SET, DICT_BRAKE_MODE
 
