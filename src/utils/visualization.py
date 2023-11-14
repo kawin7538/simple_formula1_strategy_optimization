@@ -47,7 +47,7 @@ class F1SimVisualization:
         bar_traces=[
             go.Bar(
                 name=dict_sequence['Resource'],
-                x=[dict_sequence['Laps']],y=[dict_sequence['Driver']],orientation='h',base=dict_sequence['Start'],marker_color=dict_sequence['tyre_color'],marker_line_color='black', showlegend=True
+                x=[dict_sequence['Laps']],y=[dict_sequence['Driver']],orientation='h',base=dict_sequence['Start'],marker_color=dict_sequence['tyre_color'],marker_line_color='black',marker_line_width=2, showlegend=True
             )
             for dict_sequence in list_dict_sequences
         ]
@@ -55,6 +55,7 @@ class F1SimVisualization:
         fig = go.Figure(data=bar_traces, layout=layout)
         fig.update_layout(
             plot_bgcolor='#DDDDDD',
+            xaxis_title='Laps'
         )
         names = set()
         fig.for_each_trace(
