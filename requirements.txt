@@ -3,3 +3,4 @@ mealpy
 plotly
 kaleido
 gymnasium
+tensorflow

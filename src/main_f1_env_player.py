@@ -1,7 +1,10 @@
 from datetime import timedelta
 from f1_env.f1_env import F1Env
+from utils.visualization import F1SimVisualization
 
 env=F1Env()
+
+print(env.action_space.n)
 
 observation, info = env.reset()
 

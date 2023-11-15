@@ -5,9 +5,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 from models.f1_simulation import F1Simulation
+from f1_env.f1_env import F1Env
 
 class F1SimVisualization:
-    def __init__(self,f1_simulation:F1Simulation):
+    def __init__(self,f1_simulation:F1Simulation|F1Env):
         self.f1_simulation=f1_simulation
 
     def plot_tyre_sequence(self, filepath:str):
