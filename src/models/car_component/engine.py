@@ -55,8 +55,6 @@ class Engine:
 
     def reset_engine_stat(self):
         self.engine_reliability_percent=100
-        self.engine_horsepower=0
-        self.engine_fuel_volume_kg=0
         self.engine_temperature_celcius=50
         self.engine_temperature_memory_celcius=deque(maxlen=MEMORY_SIZE)
 
