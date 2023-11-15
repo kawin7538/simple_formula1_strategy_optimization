@@ -11,3 +11,6 @@ print(env.action_space.sample())
 print(env.action_space.sample())
 print(env.action_space.sample())
 print(env.action_space.sample())
+
+print(env.observation_space)
+print(env.reset())
