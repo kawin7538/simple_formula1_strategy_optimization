@@ -53,6 +53,13 @@ class Engine:
 
         self.engine_fuel_volume_kg=fuel_volume_kg
 
+    def reset_engine_stat(self):
+        self.engine_reliability_percent=100
+        self.engine_horsepower=0
+        self.engine_fuel_volume_kg=0
+        self.engine_temperature_celcius=50
+        self.engine_temperature_memory_celcius=deque(maxlen=MEMORY_SIZE)
+
     def decrease_fuel_volume(self, diff_fuel_volume_kg:int|float):
         assert diff_fuel_volume_kg>0
 
