@@ -42,6 +42,11 @@ class Brakes:
         self.brake_mode_base_brake_temperature_celcius=self.list_brake_mode_base_brake_temperature_celcius[brake_mode_idx]
         self.brake_mode_base_reliability_percent_loss_per_lap=self.list_brake_mode_base_reliability_percent_loss_per_lap[brake_mode_idx]
 
+    def reset_brake_stat(self):
+        self.brake_temperature_celcius=40
+        self.brake_reliability_percent=100
+        self.brake_temperature_memory_celcius=deque(maxlen=MEMORY_SIZE)
+
     def decrease_brake_reliability(self, diff_brake_reliability_percent:int|float):
         assert diff_brake_reliability_percent>=0
 
