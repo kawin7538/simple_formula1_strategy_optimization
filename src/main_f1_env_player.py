@@ -4,8 +4,6 @@ from utils.visualization import F1SimVisualization
 
 env=F1Env()
 
-print(env.action_space.n)
-
 observation, info = env.reset()
 
 answer_reward=0
