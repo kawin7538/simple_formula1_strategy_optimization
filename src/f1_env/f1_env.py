@@ -182,7 +182,7 @@ class F1Env(Env):
         self.lap_stopwatch_idx=self.racetrack.num_stopwatch*self.lap_idx+self.stopwatch_idx
         self.state=np.array([DICT_TYRE_SET['list_tyre_set_name'].index(self.car.tyres.tyre_set_name),self.car.tyres.tyre_temperature_celcius,self.car.tyres.tyre_reliability_percent,self.car.engine.engine_temperature_celcius,self.car.engine.engine_reliability_percent,self.car.engine.engine_fuel_volume_kg,self.car.brakes.brake_temperature_celcius,self.car.brakes.brake_reliability_percent,self.car_in_pitlane,self.lap_idx,self.stopwatch_idx,self.num_stopwatch_all_laps-self.lap_stopwatch_idx])
 
-        if self.lap_stopwatch_idx==0:
+        if self.lap_stopwatch_idx>=self.num_stopwatch_all_laps:
             terminated=True
             if len(set(self.list_tyre_setting_all_laps))<=1:
                 reward=-(1e9)
