@@ -18,14 +18,14 @@ from tqdm import tqdm
 
 from f1_env.f1_env import F1Env
 
-BATCH_SIZE=32
+BATCH_SIZE=128
 MEMORY_SIZE=66*28*3
 MAX_EPISODES=10000
 MAX_STEPS=66*28
-REWARD_DISCOUNT_FACTOR=0.99
+REWARD_DISCOUNT_FACTOR=0.95
 TARGET_NETWORK_UPDATE_INTERVAL=28*10
 epsilon=1
-epsilon_decay_factor=0.99
+epsilon_decay_factor=0.9995
 epsilon_min=0.01
 
 class DQNAgent:
