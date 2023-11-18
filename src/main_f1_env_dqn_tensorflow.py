@@ -2,6 +2,9 @@
 Double Deep Q Learning with Experience Replay
 """
 
+import warnings
+warnings.filterwarnings("ignore")
+
 from itertools import product
 from collections import deque
 import random
@@ -15,7 +18,7 @@ from tqdm import tqdm
 
 from f1_env.f1_env import F1Env
 
-BATCH_SIZE=256
+BATCH_SIZE=32
 MEMORY_SIZE=66*28*3
 MAX_EPISODES=10000
 MAX_STEPS=66*28
@@ -100,7 +103,7 @@ if __name__ == '__main__':
 
             epsilon=max(epsilon_min,epsilon*epsilon_decay_factor)
 
-            if t%TARGET_NETWORK_UPDATE_INTERVAL==0:
+            if len(agent.sars_memory)>=BATCH_SIZE and t%TARGET_NETWORK_UPDATE_INTERVAL==0:
                 agent.target_network.set_weights(agent.online_network.get_weights())
 
             t+=1
@@ -123,4 +126,4 @@ if __name__ == '__main__':
         })
 
         if episode_idx%20==0:
-            agent.online_network.save(f'output/dqn/ep_{episode_idx}.h5')
+            agent.online_network.save(f'output/dqn/ep_{episode_idx}.keras')
