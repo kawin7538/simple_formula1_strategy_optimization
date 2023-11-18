@@ -185,6 +185,7 @@ class F1Env(Env):
         if self.lap_stopwatch_idx>=self.num_stopwatch_all_laps:
             terminated=True
             if len(set(self.list_tyre_setting_all_laps))<=1:
+                self.dnf=True
                 reward=-(1e9)
             else:
                 reward=-sum(self.list_time_usage_all_stopwatches)

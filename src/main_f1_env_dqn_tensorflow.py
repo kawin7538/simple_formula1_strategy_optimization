@@ -5,6 +5,8 @@ Double Deep Q Learning with Experience Replay
 import warnings
 warnings.filterwarnings("ignore")
 
+import os
+import shutil
 from itertools import product
 from collections import deque
 import random
@@ -17,6 +19,10 @@ from tensorflow.keras.optimizers import Adam
 from tqdm import tqdm
 
 from f1_env.f1_env import F1Env
+from models.car import Car
+from models.racetrack import RaceTrack
+from models.f1_simulation import F1Simulation
+from utils.visualization import F1SimVisualization
 
 BATCH_SIZE=128
 MEMORY_SIZE=66*28*3
@@ -25,7 +31,7 @@ MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.95
 TARGET_NETWORK_UPDATE_INTERVAL=28*10
 epsilon=1
-epsilon_decay_factor=0.9995
+epsilon_decay_factor=0.995
 epsilon_min=0.01
 
 class DQNAgent:
@@ -74,7 +80,7 @@ class DQNAgent:
 if __name__ == '__main__':
     f1_env=F1Env()
     agent=DQNAgent(f1_env)
-    list_episode_rewards=[]
+    deque_episode_rewards=deque(maxlen=512)
     list_time_usage_overall=[]
 
     t=0
@@ -111,19 +117,30 @@ if __name__ == '__main__':
             if terminated:
                 break;
 
-        list_episode_rewards.append(episode_reward)
+        deque_episode_rewards.append(episode_reward)
 
         if f1_env.dnf:
-            list_time_usage_overall.append(1e9)
+            pbar1.set_postfix({
+                'latest_reward':episode_reward,
+                'avg_reward':sum(deque_episode_rewards)/len(deque_episode_rewards),
+                'max_reward':max(deque_episode_rewards)
+            })
         else:
             list_time_usage_overall.append(sum(f1_env.list_time_usage_all_stopwatches))
+            pbar1.set_postfix({
+                'latest_reward':episode_reward,
+                'avg_reward':sum(deque_episode_rewards)/len(deque_episode_rewards),
+                'max_reward':max(deque_episode_rewards),
+                'fastest_time_usage':timedelta(seconds=min(list_time_usage_overall))
+            })
+            # create viz of race performance
+            os.makedirs(f'output/dqn/race_performance/ep_{episode_idx}/',exist_ok=True)
+            f1_sim_obj=F1Simulation(Car(),RaceTrack(),66)
+            f1_sim_obj.initialize_setting(f1_env.list_tyre_setting_all_laps, f1_env.list_car_status_will_be_pit, f1_env.list_engine_setting_all_stopwatches, f1_env.list_brake_setting_all_stopwatches)
+            f1_sim_obj.race()
+            f1_viz_obj=F1SimVisualization(f1_sim_obj)
+            f1_viz_obj.plot_package(f'output/dqn/race_performance/ep_{episode_idx}/')
+            if sum(f1_env.list_time_usage_all_stopwatches)==min(list_time_usage_overall):
+                shutil.copytree(f'output/dqn/race_performance/ep_{episode_idx}/','output/dqn/race_performance/_best/',dirs_exist_ok=True)
 
-        pbar1.set_postfix({
-            'latest_reward':episode_reward,
-            'avg_reward':sum(list_episode_rewards)/len(list_episode_rewards),
-            'max_reward':max(list_episode_rewards),
-            'fastest_time_usage':timedelta(seconds=min(list_time_usage_overall))
-        })
-
-        if episode_idx%20==0:
-            agent.online_network.save(f'output/dqn/ep_{episode_idx}.keras')
+        agent.online_network.save(f'output/dqn/model/ep_{episode_idx}.keras')
