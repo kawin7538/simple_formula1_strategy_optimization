@@ -3,6 +3,8 @@ Double Deep Q Learning with Experience Replay
 """
 
 from itertools import product
+from collections import deque
+import random
 from datetime import timedelta
 import numpy as np
 from tensorflow.keras import Model
@@ -13,6 +15,15 @@ from tqdm import tqdm
 
 from f1_env.f1_env import F1Env
 
+BATCH_SIZE=128
+MEMORY_SIZE=66*28*3
+MAX_EPISODES=10000
+MAX_STEPS=66*28
+REWARD_DISCOUNT_FACTOR=0.99
+epsilon=1
+epsilon_decay_factor=0.99
+epsilon_min=0.01
+
 class DQNAgent:
     def __init__(self,env) -> None:
         self.env=env
@@ -21,11 +32,13 @@ class DQNAgent:
         num_action_space=[env.action_space[i].n for i in range(self.env.action_space.shape[0])]
         self.list_action_space=list(product(*[list(range(i)) for i in num_action_space]))
 
+        self.sars_memory=deque(maxlen=MEMORY_SIZE)
+
         self.online_network=self.build_model()
         self.target_network=self.build_model()
 
     def build_model(self):
-        input_layer=Input(shape=(12,))
+        input_layer=Input(shape=self.shape_observation_space)
         x=Dense(1024,activation='relu')(input_layer)
         x=Dense(1024,activation='relu')(x)
         output_layer=Dense(len(self.list_action_space),activation='relu')(x)
@@ -42,10 +55,9 @@ class DQNAgent:
     def decode_action(self,action_idx:int):
         return self.list_action_space[action_idx]
     
-    def get_action(self, state:tuple|list, eps:float=0.5):
+    def get_action(self, state:np.ndarray, eps:float=0.5):
         if np.random.rand()>eps:
-            print(state)
-            return np.argmax(self.online_network.predict(state,verbose=False)[0])
+            return np.argmax(self.online_network.predict([state.tolist()],verbose=False)[0])
         else:
             return self.encode_action(self.env.action_space.sample())
 
@@ -58,16 +70,40 @@ class DQNAgent:
 if __name__ == '__main__':
     f1_env=F1Env()
     agent=DQNAgent(f1_env)
-    episode_rewards=[]
+    list_episode_rewards=[]
     
-    for episode in tqdm(range((max_episodes:=10000))):
+    for episode_idx in (pbar1:=tqdm(range(MAX_EPISODES))):
         state, info = f1_env.reset()
         episode_reward=0
 
-        for step in range((max_steps:=66*28)):
-            print(state)
-            action_idx=agent.get_action(state)
-            print(action_idx)
+        for step_idx in tqdm(range(MAX_STEPS),leave=False):
+            action_idx=agent.get_action(state, eps=epsilon)
             decoded_action=agent.decode_action(action_idx)
-            print(decoded_action)
             next_state, reward, terminated, truncated, info = f1_env.step(decoded_action)
+
+            agent.sars_memory.append([state,action_idx,reward,next_state,terminated])
+
+            episode_reward+=reward
+
+            if len(agent.sars_memory)>=BATCH_SIZE:
+                batch=np.array(random.sample(agent.sars_memory,BATCH_SIZE),dtype='object')
+                target=batch[:,2]+REWARD_DISCOUNT_FACTOR*np.max(agent.target_network.predict(np.stack(batch[:,3]),verbose=False),axis=1)*(1-batch[:,4])
+                current_Q=agent.target_network.predict(np.stack(batch[:,0]),verbose=False)
+                current_Q[np.arange(BATCH_SIZE),list(batch[:,1])]=target
+                agent.online_network.fit(np.stack(batch[:,0]),current_Q,verbose=False)
+
+            if terminated:
+                break;
+            
+            state=next_state
+
+        list_episode_rewards.append(episode_reward)
+        epsilon=max(epsilon_min,epsilon*epsilon_decay_factor)
+
+        pbar1.set_postfix({
+            'latest_reward':episode_reward,
+            'avg_reward':sum(list_episode_rewards)/len(list_episode_rewards),
+            'max_reward':max(list_episode_rewards)
+        })
+
+        break;
