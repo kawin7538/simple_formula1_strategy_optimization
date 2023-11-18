@@ -15,11 +15,12 @@ from tqdm import tqdm
 
 from f1_env.f1_env import F1Env
 
-BATCH_SIZE=128
+BATCH_SIZE=256
 MEMORY_SIZE=66*28*3
 MAX_EPISODES=10000
 MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.99
+TARGET_NETWORK_UPDATE_INTERVAL=28*10
 epsilon=1
 epsilon_decay_factor=0.99
 epsilon_min=0.01
@@ -71,6 +72,9 @@ if __name__ == '__main__':
     f1_env=F1Env()
     agent=DQNAgent(f1_env)
     list_episode_rewards=[]
+    list_time_usage_overall=[]
+
+    t=0
     
     for episode_idx in (pbar1:=tqdm(range(MAX_EPISODES))):
         state, info = f1_env.reset()
@@ -90,20 +94,33 @@ if __name__ == '__main__':
                 target=batch[:,2]+REWARD_DISCOUNT_FACTOR*np.max(agent.target_network.predict(np.stack(batch[:,3]),verbose=False),axis=1)*(1-batch[:,4])
                 current_Q=agent.target_network.predict(np.stack(batch[:,0]),verbose=False)
                 current_Q[np.arange(BATCH_SIZE),list(batch[:,1])]=target
-                agent.online_network.fit(np.stack(batch[:,0]),current_Q,verbose=False)
+                agent.online_network.fit(np.stack(batch[:,0]),current_Q, batch_size=BATCH_SIZE,verbose=False)
+
+            state=next_state
+
+            epsilon=max(epsilon_min,epsilon*epsilon_decay_factor)
+
+            if t%TARGET_NETWORK_UPDATE_INTERVAL==0:
+                agent.target_network.set_weights(agent.online_network.get_weights())
+
+            t+=1
 
             if terminated:
                 break;
-            
-            state=next_state
 
         list_episode_rewards.append(episode_reward)
-        epsilon=max(epsilon_min,epsilon*epsilon_decay_factor)
+
+        if f1_env.dnf:
+            list_time_usage_overall.append(1e9)
+        else:
+            list_time_usage_overall.append(sum(f1_env.list_time_usage_all_stopwatches))
 
         pbar1.set_postfix({
             'latest_reward':episode_reward,
             'avg_reward':sum(list_episode_rewards)/len(list_episode_rewards),
-            'max_reward':max(list_episode_rewards)
+            'max_reward':max(list_episode_rewards),
+            'fastest_time_usage':timedelta(seconds=min(list_time_usage_overall))
         })
 
-        break;
+        if episode_idx%20==0:
+            agent.online_network.save(f'output/dqn/ep_{episode_idx}.h5')

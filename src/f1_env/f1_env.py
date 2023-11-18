@@ -114,7 +114,8 @@ class F1Env(Env):
         if not self.car.is_drivable():
             self.dnf=True
             terminated=True
-            reward=-(1e9+sum([1 for val in self.list_time_usage_all_stopwatches if val==None]))
+            # reward=-(1e9+sum([1 for val in self.list_time_usage_all_stopwatches if val==None]))
+            reward=-(1e9)
             self.state=np.array([DICT_TYRE_SET['list_tyre_set_name'].index(self.car.tyres.tyre_set_name),self.car.tyres.tyre_temperature_celcius,self.car.tyres.tyre_reliability_percent,self.car.engine.engine_temperature_celcius,self.car.engine.engine_reliability_percent,self.car.engine.engine_fuel_volume_kg,self.car.brakes.brake_temperature_celcius,self.car.brakes.brake_reliability_percent,self.car_in_pitlane,self.lap_idx,self.stopwatch_idx,self.num_stopwatch_all_laps-self.lap_stopwatch_idx])
             return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
         # firstly init first stint for lap 0 and stopwatch 0
@@ -142,7 +143,8 @@ class F1Env(Env):
         if self.car.car_speed_km_hr<=0:
             self.dnf=True
             terminated=True
-            reward=-(1e9+sum([1 for val in self.list_time_usage_all_stopwatches if val==None]))
+            # reward=-(1e9+sum([1 for val in self.list_time_usage_all_stopwatches if val==None]))
+            reward=-(1e9)
             self.state=np.array([DICT_TYRE_SET['list_tyre_set_name'].index(self.car.tyres.tyre_set_name),self.car.tyres.tyre_temperature_celcius,self.car.tyres.tyre_reliability_percent,self.car.engine.engine_temperature_celcius,self.car.engine.engine_reliability_percent,self.car.engine.engine_fuel_volume_kg,self.car.brakes.brake_temperature_celcius,self.car.brakes.brake_reliability_percent,self.car_in_pitlane,self.lap_idx,self.stopwatch_idx,self.num_stopwatch_all_laps-self.lap_stopwatch_idx])
             return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
         # measure time usage
@@ -179,5 +181,15 @@ class F1Env(Env):
             self.stopwatch_idx=0
         self.lap_stopwatch_idx=self.racetrack.num_stopwatch*self.lap_idx+self.stopwatch_idx
         self.state=np.array([DICT_TYRE_SET['list_tyre_set_name'].index(self.car.tyres.tyre_set_name),self.car.tyres.tyre_temperature_celcius,self.car.tyres.tyre_reliability_percent,self.car.engine.engine_temperature_celcius,self.car.engine.engine_reliability_percent,self.car.engine.engine_fuel_volume_kg,self.car.brakes.brake_temperature_celcius,self.car.brakes.brake_reliability_percent,self.car_in_pitlane,self.lap_idx,self.stopwatch_idx,self.num_stopwatch_all_laps-self.lap_stopwatch_idx])
+
+        if self.lap_stopwatch_idx==0:
+            terminated=True
+            if len(set(self.list_tyre_setting_all_laps))<=1:
+                reward=-(1e9)
+            else:
+                reward=-sum(self.list_time_usage_all_stopwatches)
+        else:
+            terminated=False
+            reward=0
 
         return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
