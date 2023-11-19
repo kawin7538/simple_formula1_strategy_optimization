@@ -90,10 +90,10 @@ class F1Env(Env):
         tyre_set_idx, pit_next_lap, engine_mode_idx, brake_mode_idx = action
 
         # set engine_mode
-        self.car.set_engine_mode(DICT_ENGINE_MODE['list_engine_mode_name'][engine_mode_idx])
+        self.car.engine.set_engine_mode(DICT_ENGINE_MODE['list_engine_mode_name'][engine_mode_idx])
         self.list_engine_setting_all_stopwatches[self.racetrack.num_stopwatch*self.lap_idx+self.stopwatch_idx]=self.car.engine.engine_mode_name
         # set brake_mode
-        self.car.set_brake_mode(DICT_BRAKE_MODE['list_brake_mode_name'][brake_mode_idx])
+        self.car.brakes.set_brake_mode(DICT_BRAKE_MODE['list_brake_mode_name'][brake_mode_idx])
         self.list_brake_setting_all_stopwatches[self.racetrack.num_stopwatch*self.lap_idx+self.stopwatch_idx]=self.car.brakes.brake_mode_name
         # measure temperature of engine
         self.car.engine.measure_engine_temperature()
@@ -122,7 +122,7 @@ class F1Env(Env):
             return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
         # firstly init first stint for lap 0 and stopwatch 0
         if self.lap_idx==0 and self.stopwatch_idx==0:
-            self.car.set_tyre_set(DICT_TYRE_SET['list_tyre_set_name'][tyre_set_idx])
+            self.car.tyres.set_tyre_set(DICT_TYRE_SET['list_tyre_set_name'][tyre_set_idx])
             self.car.tyres.reset_tyre_stat()
         # check goto pitstop condition on current lap idx
         if self.lap_idx<self.number_of_laps-1:
@@ -130,12 +130,12 @@ class F1Env(Env):
                 self.car_in_pitlane=True
                 self.list_car_status_will_be_pit[self.lap_idx]=True
                 self.car.set_car_pitlane_mode("ON")
-            elif self.stopwatch_idx==self.racetrack.start_end_pitlane_stopwatch[0] and self.car_in_pitlane==False:
+            elif pit_next_lap==False and self.stopwatch_idx==self.racetrack.start_end_pitlane_stopwatch[0] and self.car_in_pitlane==False:
                 self.list_car_status_will_be_pit[self.lap_idx]=False
         if self.car_in_pitlane==True and self.stopwatch_idx==0:
-            self.car.set_tyre_set(DICT_TYRE_SET['list_tyre_set_name'][tyre_set_idx])
+            self.car.tyres.set_tyre_set(DICT_TYRE_SET['list_tyre_set_name'][tyre_set_idx])
             self.car.tyres.reset_tyre_stat()
-        elif self.car_in_pitlane==True and self.stopwatch_idx==self.racetrack.start_end_pitlane_stopwatch[1]:
+        if self.car_in_pitlane==True and self.stopwatch_idx==self.racetrack.start_end_pitlane_stopwatch[1]:
             self.car_in_pitlane=False
             self.car.set_car_pitlane_mode("OFF")
         # check if stopwatch_idx==0, then memorized current tyre set
@@ -187,7 +187,8 @@ class F1Env(Env):
         self.lap_stopwatch_idx=self.racetrack.num_stopwatch*self.lap_idx+self.stopwatch_idx
         self.state=np.array([DICT_TYRE_SET['list_tyre_set_name'].index(self.car.tyres.tyre_set_name),self.car.tyres.tyre_temperature_celcius,self.car.tyres.tyre_reliability_percent,self.car.engine.engine_temperature_celcius,self.car.engine.engine_reliability_percent,self.car.engine.engine_fuel_volume_kg,self.car.brakes.brake_temperature_celcius,self.car.brakes.brake_reliability_percent,self.car_in_pitlane,self.lap_idx,self.stopwatch_idx,self.num_stopwatch_all_laps-self.lap_stopwatch_idx])
 
-        if self.num_stopwatch_all_laps-self.lap_stopwatch_idx<=0:
+        # if self.num_stopwatch_all_laps-self.lap_stopwatch_idx<=0:
+        if not None in self.list_time_usage_all_stopwatches:
             terminated=True
             if len(set(self.list_tyre_setting_all_laps))<=1:
                 self.dnf=True
