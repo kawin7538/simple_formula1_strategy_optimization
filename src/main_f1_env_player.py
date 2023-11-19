@@ -8,7 +8,8 @@ observation, info = env.reset()
 
 answer_reward=0
 for i in range(66*28):
-    action=env.action_space.sample()
+    # action=env.action_space.sample()
+    action=(0,0,0,0)
     observation, reward, terminated, _, _ = env.step(action)
 
     if not terminated:

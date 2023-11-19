@@ -31,7 +31,7 @@ MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.95
 TARGET_NETWORK_UPDATE_INTERVAL=28*10
 epsilon=1
-epsilon_decay_factor=0.995
+epsilon_decay_factor=0.999
 epsilon_min=0.01
 
 class DQNAgent:
