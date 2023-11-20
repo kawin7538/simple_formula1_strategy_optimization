@@ -183,6 +183,66 @@ class F1SimVisualization:
         )
         fig.write_image(filepath,width=1600, height=900)
 
+    def plot_engine_setting_all_stopwatch(self, filepath:str):
+        list_lap_idx=list()
+        for i in range(self.f1_simulation.number_of_laps):
+            list_lap_idx+=[i]*self.f1_simulation.racetrack.num_stopwatch
+        dict_data={
+            'lap_idx':list_lap_idx,
+            'stopwatch_idx':list(range(self.f1_simulation.racetrack.num_stopwatch))*self.f1_simulation.number_of_laps,
+            'engine_setting':self.f1_simulation.list_engine_setting_all_stopwatches
+        }
+        df=pd.DataFrame.from_dict(dict_data)
+        list_lap_engine_idx=list()
+        for i in range(self.f1_simulation.number_of_laps):
+            list_lap_engine_idx+=[i]*len(self.f1_simulation.car.engine.list_engine_mode_name)
+        template_df=pd.DataFrame.from_dict({'lap_idx':list_lap_engine_idx,'engine_setting':self.f1_simulation.car.engine.list_engine_mode_name*self.f1_simulation.number_of_laps})
+        merged_df=df.groupby(['lap_idx','engine_setting']).agg({'engine_setting':'count'}).rename(columns={'engine_setting':'count_engine_setting'}).reset_index()
+        template_merged_df=template_df.merge(merged_df,how='left').fillna(0)
+        final_df=template_merged_df.pivot_table(index='engine_setting',columns='lap_idx',values='count_engine_setting').reindex(self.f1_simulation.car.engine.list_engine_mode_name[::-1])/self.f1_simulation.racetrack.num_stopwatch
+        fig=go.Figure(data=go.Heatmap(
+            z=final_df,x=list(range(self.f1_simulation.number_of_laps)),y=self.f1_simulation.car.engine.list_engine_mode_name[::-1],colorscale='Oranges',zmin=0,zmax=1,xgap=1,ygap=1,colorbar={"title": '% Utilization'}
+        ))
+        fig.update_xaxes(type='category',gridcolor='black',tickson='boundaries',linewidth=2)
+        fig.update_yaxes(type='category',gridcolor='black',tickson='boundaries',linewidth=2)
+        fig.update_traces(colorbar_orientation='h')
+        fig.update_layout(
+            xaxis_title='laps',
+            yaxis_title='Engine Mode',
+            title='Engine mode utilization ratio'
+        )
+        fig.write_image(filepath,width=1600, height=900, scale=3)
+
+    def plot_brake_setting_all_stopwatch(self, filepath:str):
+        list_lap_idx=list()
+        for i in range(self.f1_simulation.number_of_laps):
+            list_lap_idx+=[i]*self.f1_simulation.racetrack.num_stopwatch
+        dict_data={
+            'lap_idx':list_lap_idx,
+            'stopwatch_idx':list(range(self.f1_simulation.racetrack.num_stopwatch))*self.f1_simulation.number_of_laps,
+            'brake_setting':self.f1_simulation.list_brake_setting_all_stopwatches
+        }
+        df=pd.DataFrame.from_dict(dict_data)
+        list_lap_brake_idx=list()
+        for i in range(self.f1_simulation.number_of_laps):
+            list_lap_brake_idx+=[i]*len(self.f1_simulation.car.brakes.list_brake_mode_name)
+        template_df=pd.DataFrame.from_dict({'lap_idx':list_lap_brake_idx,'brake_setting':self.f1_simulation.car.brakes.list_brake_mode_name*self.f1_simulation.number_of_laps})
+        merged_df=df.groupby(['lap_idx','brake_setting']).agg({'brake_setting':'count'}).rename(columns={'brake_setting':'count_brake_setting'}).reset_index()
+        template_merged_df=template_df.merge(merged_df,how='left').fillna(0)
+        final_df=template_merged_df.pivot_table(index='brake_setting',columns='lap_idx',values='count_brake_setting').reindex(self.f1_simulation.car.brakes.list_brake_mode_name[::-1])/self.f1_simulation.racetrack.num_stopwatch
+        fig=go.Figure(data=go.Heatmap(
+            z=final_df,x=list(range(self.f1_simulation.number_of_laps)),y=self.f1_simulation.car.brakes.list_brake_mode_name[::-1],colorscale='Oranges',zmin=0,zmax=1,xgap=1,ygap=1,colorbar={"title": '% Utilization'}
+        ))
+        fig.update_xaxes(type='category',gridcolor='black',tickson='boundaries',linewidth=2)
+        fig.update_yaxes(type='category',gridcolor='black',tickson='boundaries',linewidth=2)
+        fig.update_traces(colorbar_orientation='h')
+        fig.update_layout(
+            xaxis_title='laps',
+            yaxis_title='Brake Mode',
+            title='Brake mode utilization ratio'
+        )
+        fig.write_image(filepath,width=1600, height=900, scale=3)
+
     def plot_package(self,folderpath:str):
         self.plot_tyre_sequence(folderpath+'/tyre_sequence.png')
         self.plot_car_speed(folderpath+'/car_speed.png')
@@ -196,3 +256,5 @@ class F1SimVisualization:
         self.plot_brake_temperature_all_stopwatch(folderpath+"/brake_temperature_all_stopwatch.png")
         self.plot_tyre_reliability_all_stopwatch(folderpath+"/tyre_reliability_all_stopwatch.png")
         self.plot_tyre_temperature_all_stopwatch(folderpath+"/tyre_temperature_all_stopwatch.png")
+        self.plot_engine_setting_all_stopwatch(folderpath+"/engine_setting_all_stopwatch.png")
+        self.plot_brake_setting_all_stopwatch(folderpath+"/brake_setting_all_stopwatch.png")
