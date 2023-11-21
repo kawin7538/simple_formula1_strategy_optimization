@@ -58,7 +58,7 @@ class DuelingDQNAgent:
         Q_layer=value_layer+tf.subtract(action_layer,tf.reduce_mean(action_layer,axis=1,keepdims=True))
 
         model=Model(input_layer,Q_layer)
-        model.compile(loss=Huber(),optimizer=Adam(lr=1e-4))
+        model.compile(loss=Huber(),optimizer=Adam(learning_rate=1e-4))
 
         return model
 
