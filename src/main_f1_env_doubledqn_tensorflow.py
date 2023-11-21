@@ -134,13 +134,13 @@ if __name__ == '__main__':
                 'fastest_time_usage':timedelta(seconds=min(list_time_usage_overall))
             })
             # create viz of race performance
-            os.makedirs(f'output/dqn/race_performance/ep_{episode_idx}/',exist_ok=True)
+            os.makedirs(f'output/double_dqn/race_performance/ep_{episode_idx}/',exist_ok=True)
             # f1_sim_obj=F1Simulation(Car(),RaceTrack(),66)
             # f1_sim_obj.initialize_setting(f1_env.list_tyre_setting_all_laps, f1_env.list_car_status_will_be_pit, f1_env.list_engine_setting_all_stopwatches, f1_env.list_brake_setting_all_stopwatches)
             # f1_sim_obj.race()
             f1_viz_obj=F1SimVisualization(f1_env)
-            f1_viz_obj.plot_package(f'output/dqn/race_performance/ep_{episode_idx}/')
+            f1_viz_obj.plot_package(f'output/double_dqn/race_performance/ep_{episode_idx}/')
             if sum(f1_env.list_time_usage_all_stopwatches)==min(list_time_usage_overall):
-                shutil.copytree(f'output/dqn/race_performance/ep_{episode_idx}/','output/dqn/race_performance/_best/',dirs_exist_ok=True)
+                shutil.copytree(f'output/double_dqn/race_performance/ep_{episode_idx}/','output/double_dqn/race_performance/_best/',dirs_exist_ok=True)
 
-        agent.online_network.save(f'output/dqn/model/ep_{episode_idx}.keras')
+        agent.online_network.save(f'output/double_dqn/model/ep_{episode_idx}.keras')
