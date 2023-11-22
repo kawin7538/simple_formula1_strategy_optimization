@@ -53,9 +53,9 @@ class DuelingDQNAgent:
         input_layer=Input(shape=self.shape_observation_space)
         x=Dense(1024,activation='relu')(input_layer)
         x=Dense(1024,activation='relu')(x)
-        action_layer=Dense(len(self.list_action_space),activation='softplus')(x)
-        value_layer=Dense(1,activation='relu')(x)
-        Q_layer=value_layer+tf.subtract(action_layer,tf.reduce_mean(action_layer,axis=1,keepdims=True))
+        advantage_layer=Dense(len(self.list_action_space),activation='softplus',name='advantage_layer')(x)
+        value_layer=Dense(1,activation='relu',name='value_layer')(x)
+        Q_layer=tf.add(value_layer,tf.subtract(advantage_layer,tf.reduce_mean(advantage_layer,axis=1,keepdims=True,name='advantage_mean_layer'),name='advantage_subtract_layer'),name='Q_layer')
 
         model=Model(input_layer,Q_layer)
         model.compile(loss='mean_squared_error',optimizer='adam')
