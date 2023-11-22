@@ -194,7 +194,7 @@ class F1Env(Env):
                 self.dnf=True
                 reward=-(1e9)
             else:
-                reward=(-sum(self.list_time_usage_all_stopwatches)/100+self.car.engine.engine_reliability_percent+self.car.brakes.brake_reliability_percent)
+                reward=(-sum(self.list_time_usage_all_stopwatches)/100-self.car.engine.engine_reliability_percent-self.car.brakes.brake_reliability_percent)
         else:
             terminated=False
             # reward=0
