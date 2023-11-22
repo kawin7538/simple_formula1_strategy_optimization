@@ -31,9 +31,9 @@ MEMORY_SIZE=66*28*5
 MAX_EPISODES=10000
 MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.95
-TARGET_NETWORK_UPDATE_INTERVAL=28*20
+TARGET_NETWORK_UPDATE_INTERVAL=28*10
 epsilon=1
-epsilon_decay_factor=0.99999
+epsilon_decay_factor=0.9999
 epsilon_min=0.01
 
 class BranchingDuelingDQNAgent:
@@ -51,19 +51,17 @@ class BranchingDuelingDQNAgent:
 
     def build_model(self):
         input_layer=Input(shape=self.shape_observation_space)
-        x=Dense(512,activation='relu')(input_layer)
-        x=Dense(512,activation='relu')(x)
-        x=BatchNormalization()(x)
-        x=Dropout(0.2)(x)
-        fc_tyre_set_layer=Dense(512,activation='relu',name='fc_tyre_set_layer')(x)
+        x=Dense(1024,activation='relu')(input_layer)
+        x=Dense(1024,activation='relu')(x)
+        fc_tyre_set_layer=Dense(1024,activation='relu',name='fc_tyre_set_layer')(x)
         advantage_tyre_set_layer=Dense(self.num_action_space[0],activation='softplus',name='advantage_tyre_set_layer')(fc_tyre_set_layer)
-        fc_pit_next_lap_layer=Dense(512,activation='relu',name='fc_pit_next_lap_layer')(x)
+        fc_pit_next_lap_layer=Dense(1024,activation='relu',name='fc_pit_next_lap_layer')(x)
         advantage_pit_next_lap_layer=Dense(self.num_action_space[1],activation='softplus',name='advantage_pit_next_lap_layer')(fc_pit_next_lap_layer)
-        fc_engine_mode_layer=Dense(512,activation='relu',name='fc_engine_mode_layer')(x)
+        fc_engine_mode_layer=Dense(1024,activation='relu',name='fc_engine_mode_layer')(x)
         advantage_engine_mode_layer=Dense(self.num_action_space[2],activation='softplus',name='advantage_engine_mode_layer')(fc_engine_mode_layer)
-        fc_brake_mode_layer=Dense(512,activation='relu',name='fc_brake_mode_layer')(x)
+        fc_brake_mode_layer=Dense(1024,activation='relu',name='fc_brake_mode_layer')(x)
         advantage_brake_mode_layer=Dense(self.num_action_space[3],activation='softplus',name='advantage_brake_mode_layer')(fc_brake_mode_layer)
-        fc_value_layer=Dense(512,activation='relu',name='fc_value_layer')(x)
+        fc_value_layer=Dense(1024,activation='relu',name='fc_value_layer')(x)
         value_layer=Dense(1,activation='relu',name='value_layer')(fc_value_layer)
         Q_tyre_set_layer=tf.add(value_layer,tf.subtract(advantage_tyre_set_layer,tf.reduce_mean(advantage_tyre_set_layer,axis=1,keepdims=True,name='advantage_tyre_set_mean_layer'),name='advantage_tyre_set_subtract_layer'),name='Q_tyre_set_layer')
         Q_pit_next_lap_layer=tf.add(value_layer,tf.subtract(advantage_pit_next_lap_layer,tf.reduce_mean(advantage_pit_next_lap_layer,axis=1,keepdims=True,name='advantage_pit_next_lap_mean_layer'),name='advantage_pit_next_lap_subtract_layer'),name='Q_pit_next_lap_layer')
