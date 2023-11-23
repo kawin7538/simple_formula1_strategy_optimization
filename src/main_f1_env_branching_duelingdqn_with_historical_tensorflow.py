@@ -182,27 +182,25 @@ if __name__ == '__main__':
 
         deque_episode_rewards.append(episode_reward)
 
-        break;
+        if f1_env.dnf:
+            pbar1.set_postfix({
+                'latest_reward':episode_reward,
+                'avg_reward':sum(deque_episode_rewards)/len(deque_episode_rewards),
+                'max_reward':max(deque_episode_rewards)
+            })
+        else:
+            list_time_usage_overall.append(sum(f1_env.list_time_usage_all_stopwatches))
+            pbar1.set_postfix({
+                'latest_reward':episode_reward,
+                'avg_reward':sum(deque_episode_rewards)/len(deque_episode_rewards),
+                'max_reward':max(deque_episode_rewards),
+                'fastest_time_usage':timedelta(seconds=min(list_time_usage_overall))
+            })
+            # create viz of race performance
+            os.makedirs(f'output/branching_dueling_dqn_with_historical/race_performance/ep_{episode_idx}/',exist_ok=True)
+            f1_viz_obj=F1SimVisualization(f1_env)
+            f1_viz_obj.plot_package(f'output/branching_dueling_dqn_with_historical/race_performance/ep_{episode_idx}/')
+            if sum(f1_env.list_time_usage_all_stopwatches)==min(list_time_usage_overall):
+                shutil.copytree(f'output/branching_dueling_dqn_with_historical/race_performance/ep_{episode_idx}/','output/branching_dueling_dqn_with_historical/race_performance/_best/',dirs_exist_ok=True)
 
-#         if f1_env.dnf:
-#             pbar1.set_postfix({
-#                 'latest_reward':episode_reward,
-#                 'avg_reward':sum(deque_episode_rewards)/len(deque_episode_rewards),
-#                 'max_reward':max(deque_episode_rewards)
-#             })
-#         else:
-#             list_time_usage_overall.append(sum(f1_env.list_time_usage_all_stopwatches))
-#             pbar1.set_postfix({
-#                 'latest_reward':episode_reward,
-#                 'avg_reward':sum(deque_episode_rewards)/len(deque_episode_rewards),
-#                 'max_reward':max(deque_episode_rewards),
-#                 'fastest_time_usage':timedelta(seconds=min(list_time_usage_overall))
-#             })
-#             # create viz of race performance
-#             os.makedirs(f'output/branching_dueling_dqn/race_performance/ep_{episode_idx}/',exist_ok=True)
-#             f1_viz_obj=F1SimVisualization(f1_env)
-#             f1_viz_obj.plot_package(f'output/branching_dueling_dqn/race_performance/ep_{episode_idx}/')
-#             if sum(f1_env.list_time_usage_all_stopwatches)==min(list_time_usage_overall):
-#                 shutil.copytree(f'output/branching_dueling_dqn/race_performance/ep_{episode_idx}/','output/branching_dueling_dqn/race_performance/_best/',dirs_exist_ok=True)
-
-#         agent.online_network.save(f'output/branching_dueling_dqn/model/ep_{episode_idx}.keras')
+        agent.online_network.save(f'output/branching_dueling_dqn_with_historical/model/ep_{episode_idx}.keras')
