@@ -197,10 +197,12 @@ class F1Env(Env):
                 reward=(-sum(self.list_time_usage_all_stopwatches)/100-self.car.engine.engine_reliability_percent-self.car.brakes.brake_reliability_percent)
         else:
             terminated=False
-            # reward=0
+            reward=0
             if self.car.tyres.tyre_reliability_percent==0:
-                reward=-1
-            else:
-                reward=0
+                reward-=1
+            if pit_next_lap==True:
+                reward-=1
+            # else:
+            #     reward=0
 
         return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
