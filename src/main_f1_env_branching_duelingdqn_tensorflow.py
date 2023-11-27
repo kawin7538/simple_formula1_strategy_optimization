@@ -33,7 +33,7 @@ MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.95
 TARGET_NETWORK_UPDATE_INTERVAL=28*10
 epsilon=1
-epsilon_decay_factor=0.9999
+epsilon_decay_factor=1-1e-4
 epsilon_min=0.01
 
 class BranchingDuelingDQNAgent:
@@ -105,7 +105,7 @@ if __name__ == '__main__':
         state, info = f1_env.reset()
         episode_reward=0
 
-        for step_idx in tqdm(range(MAX_STEPS),leave=False):
+        for step_idx in (pbar2:=tqdm(range(MAX_STEPS),leave=False)):
             action=agent.get_action(state,eps=epsilon)
             next_state, reward, terminated, truncated, info = f1_env.step(action)
 
@@ -136,6 +136,10 @@ if __name__ == '__main__':
 
             if terminated:
                 break;
+        
+            pbar2.set_postfix({
+                'epsilon':epsilon
+            })
 
         deque_episode_rewards.append(episode_reward)
 
