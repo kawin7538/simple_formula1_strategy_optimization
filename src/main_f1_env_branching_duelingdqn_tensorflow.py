@@ -27,13 +27,13 @@ from models.f1_simulation import F1Simulation
 from utils.visualization import F1SimVisualization
 
 BATCH_SIZE=128
-MEMORY_SIZE=66*28*20
-MAX_EPISODES=10000
+MEMORY_SIZE=66*28*100
+MAX_EPISODES=1000000
 MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.95
-TARGET_NETWORK_UPDATE_INTERVAL=28*10
+TARGET_NETWORK_UPDATE_INTERVAL=28*20
 epsilon=1
-epsilon_decay_factor=1-1e-4
+epsilon_decay_factor=1-1e-6
 epsilon_min=0.01
 
 class BranchingDuelingDQNAgent:
