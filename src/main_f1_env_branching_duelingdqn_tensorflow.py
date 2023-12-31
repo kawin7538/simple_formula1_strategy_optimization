@@ -2,8 +2,8 @@
 Dueling Double Deep Q Learning with Experience Replay
 """
 
-import warnings
-warnings.filterwarnings("ignore")
+# import warnings
+# warnings.filterwarnings("ignore")
 
 import os
 import shutil
@@ -27,7 +27,7 @@ from models.f1_simulation import F1Simulation
 from utils.visualization import F1SimVisualization
 
 BATCH_SIZE=128
-MEMORY_SIZE=66*28*5
+MEMORY_SIZE=66*28*20
 MAX_EPISODES=10000
 MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.95
@@ -52,6 +52,10 @@ class BranchingDuelingDQNAgent:
     def build_model(self):
         input_layer=Input(shape=self.shape_observation_space)
         x=Dense(1024,activation='relu')(input_layer)
+        x=Dense(1024,activation='relu')(x)
+        x=BatchNormalization()(x)
+        x=Dense(1024,activation='relu')(x)
+        x=Dense(1024,activation='relu')(x)
         x=Dense(1024,activation='relu')(x)
         x=BatchNormalization()(x)
         fc1_tyre_set_layer=Dense(1024,activation='relu',name='fc1_tyre_set_layer')(x)
