@@ -19,6 +19,7 @@ from tensorflow.keras.losses import Huber
 from tensorflow.keras.optimizers import Adam
 
 from tqdm import tqdm
+import wandb
 
 from f1_env.f1_env import F1Env
 from models.car import Car
@@ -26,14 +27,14 @@ from models.racetrack import RaceTrack
 from models.f1_simulation import F1Simulation
 from utils.visualization import F1SimVisualization
 
-BATCH_SIZE=128
-MEMORY_SIZE=66*28*100
-MAX_EPISODES=1000000
+BATCH_SIZE=256
+MEMORY_SIZE=66*28*30
+MAX_EPISODES=10000
 MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.95
-TARGET_NETWORK_UPDATE_INTERVAL=28*20
+TARGET_NETWORK_UPDATE_INTERVAL=28*10
 epsilon=1
-epsilon_decay_factor=1-1e-6
+epsilon_decay_factor=1-5e-6
 epsilon_min=0.01
 
 class BranchingDuelingDQNAgent:
@@ -81,6 +82,8 @@ class BranchingDuelingDQNAgent:
         model=Model(input_layer,[Q_tyre_set_layer,Q_pit_next_lap_layer,Q_engine_mode_layer,Q_brake_mode_layer])
         model.compile(loss='mean_squared_error',optimizer='adam')
 
+        model.summary()
+
         return model
 
     def encode_action(self, action:tuple|list):
@@ -98,6 +101,21 @@ class BranchingDuelingDQNAgent:
             return self.env.action_space.sample()
 
 if __name__ == '__main__':
+
+    wandb_run=wandb.init(
+        project='simple_f1_strategy_optimization',
+        name='branching_duelingdqn'
+    )
+
+    wandb_run.config.update({
+        'model':'branching_duelingdqn',
+        'batch_size':BATCH_SIZE,
+        'memory_size':MEMORY_SIZE,
+        'reward_discount_factor':REWARD_DISCOUNT_FACTOR,
+        'target_network_interval_update':TARGET_NETWORK_UPDATE_INTERVAL,
+        'epsilon_decay_factor':epsilon_decay_factor
+    })
+
     f1_env=F1Env()
     agent=BranchingDuelingDQNAgent(f1_env)
     deque_episode_rewards=deque(maxlen=512)
@@ -153,6 +171,10 @@ if __name__ == '__main__':
                 'avg_reward':sum(deque_episode_rewards)/len(deque_episode_rewards),
                 'max_reward':max(deque_episode_rewards)
             })
+            # log to wandb
+            wandb_run.log({
+                'latest_reward':episode_reward,
+            })
         else:
             list_time_usage_overall.append(sum(f1_env.list_time_usage_all_stopwatches))
             pbar1.set_postfix({
@@ -160,6 +182,11 @@ if __name__ == '__main__':
                 'avg_reward':sum(deque_episode_rewards)/len(deque_episode_rewards),
                 'max_reward':max(deque_episode_rewards),
                 'fastest_time_usage':timedelta(seconds=min(list_time_usage_overall))
+            })
+            # log to wandb
+            wandb_run.log({
+                'latest_reward':episode_reward,
+                'latest_time_usage':sum(f1_env.list_time_usage_all_stopwatches)
             })
             # create viz of race performance
             os.makedirs(f'output/branching_dueling_dqn/race_performance/ep_{episode_idx}/',exist_ok=True)
