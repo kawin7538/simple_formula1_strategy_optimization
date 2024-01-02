@@ -6,6 +6,7 @@ Dueling Double Deep Q Learning with Experience Replay
 # warnings.filterwarnings("ignore")
 
 import os
+import glob
 import shutil
 from itertools import product
 from collections import deque
@@ -194,5 +195,7 @@ if __name__ == '__main__':
             f1_viz_obj.plot_package(f'output/branching_dueling_dqn/race_performance/ep_{episode_idx}/')
             if sum(f1_env.list_time_usage_all_stopwatches)==min(list_time_usage_overall):
                 shutil.copytree(f'output/branching_dueling_dqn/race_performance/ep_{episode_idx}/','output/branching_dueling_dqn/race_performance/_best/',dirs_exist_ok=True)
+                for filename in glob.glob("output/branching_dueling_dqn/race_performance/_best/*"):
+                    wandb_run.log({filename:wandb.Image(filename)})
 
         agent.online_network.save(f'output/branching_dueling_dqn/model/ep_{episode_idx}.keras')
