@@ -35,7 +35,7 @@ MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.95
 TARGET_NETWORK_UPDATE_INTERVAL=28*45
 epsilon=1
-epsilon_decay_factor=1-5e-6
+epsilon_decay_factor=1-1e-5
 epsilon_min=0.01
 
 class BranchingDuelingDQNAgent:
@@ -189,7 +189,7 @@ if __name__ == '__main__':
             f1_viz_obj.plot_package(f'output/branching_dueling_dqn/race_performance/ep_{episode_idx}/')
             if sum(f1_env.list_time_usage_all_stopwatches)==min(list_time_usage_overall):
                 shutil.copytree(f'output/branching_dueling_dqn/race_performance/ep_{episode_idx}/','output/branching_dueling_dqn/race_performance/_best/',dirs_exist_ok=True)
-                for filename in glob.glob("output/branching_dueling_dqn/race_performance/_best/*"):
-                    wandb_run.log({filename:wandb.Image(filename)})
+                # for filename in glob.glob("output/branching_dueling_dqn/race_performance/_best/*"):
+                #     wandb_run.log({filename.split("/")[-1]:wandb.Image(filename)})
 
         agent.online_network.save(f'output/branching_dueling_dqn/model/ep_{episode_idx}.keras')
