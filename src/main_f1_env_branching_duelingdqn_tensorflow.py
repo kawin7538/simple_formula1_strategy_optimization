@@ -28,7 +28,7 @@ from models.racetrack import RaceTrack
 from models.f1_simulation import F1Simulation
 from utils.visualization import F1SimVisualization
 
-BATCH_SIZE=256
+BATCH_SIZE=1024
 MEMORY_SIZE=66*28*30
 MAX_EPISODES=10000
 MAX_STEPS=66*28

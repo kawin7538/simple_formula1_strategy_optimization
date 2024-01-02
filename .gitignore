@@ -180,3 +180,4 @@ Backup of *.doc*
 *.~vsd*
 
 output/
+wandb/
