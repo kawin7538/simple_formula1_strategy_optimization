@@ -35,7 +35,7 @@ MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.95
 TARGET_NETWORK_UPDATE_INTERVAL=28*45
 epsilon=1
-epsilon_decay_factor=1-1e-5
+epsilon_decay_factor=1-5e-6
 epsilon_min=0.01
 
 class BranchingDuelingDQNAgent:
