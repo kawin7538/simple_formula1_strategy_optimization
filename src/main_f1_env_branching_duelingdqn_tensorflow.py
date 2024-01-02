@@ -53,27 +53,23 @@ class BranchingDuelingDQNAgent:
 
     def build_model(self):
         input_layer=Input(shape=self.shape_observation_space)
-        x=Dense(1024,activation='relu')(input_layer)
-        x=Dense(1024,activation='relu')(x)
+        x=Dense(4096,activation='relu')(input_layer)
+        x=Dense(4096,activation='relu')(x)
         x=BatchNormalization()(x)
-        x=Dense(1024,activation='relu')(x)
-        x=Dense(1024,activation='relu')(x)
-        x=Dense(1024,activation='relu')(x)
-        x=BatchNormalization()(x)
-        fc1_tyre_set_layer=Dense(1024,activation='relu',name='fc1_tyre_set_layer')(x)
-        fc2_tyre_set_layer=Dense(1024,activation='relu',name='fc2_tyre_set_layer')(fc1_tyre_set_layer)
+        fc1_tyre_set_layer=Dense(4096,activation='relu',name='fc1_tyre_set_layer')(x)
+        fc2_tyre_set_layer=Dense(4096,activation='relu',name='fc2_tyre_set_layer')(fc1_tyre_set_layer)
         advantage_tyre_set_layer=Dense(self.num_action_space[0],activation='softplus',name='advantage_tyre_set_layer')(fc2_tyre_set_layer)
-        fc1_pit_next_lap_layer=Dense(1024,activation='relu',name='fc1_pit_next_lap_layer')(x)
-        fc2_pit_next_lap_layer=Dense(1024,activation='relu',name='fc2_pit_next_lap_layer')(fc1_pit_next_lap_layer)
+        fc1_pit_next_lap_layer=Dense(4096,activation='relu',name='fc1_pit_next_lap_layer')(x)
+        fc2_pit_next_lap_layer=Dense(4096,activation='relu',name='fc2_pit_next_lap_layer')(fc1_pit_next_lap_layer)
         advantage_pit_next_lap_layer=Dense(self.num_action_space[1],activation='softplus',name='advantage_pit_next_lap_layer')(fc2_pit_next_lap_layer)
-        fc1_engine_mode_layer=Dense(1024,activation='relu',name='fc1_engine_mode_layer')(x)
-        fc2_engine_mode_layer=Dense(1024,activation='relu',name='fc2_engine_mode_layer')(fc1_engine_mode_layer)
+        fc1_engine_mode_layer=Dense(4096,activation='relu',name='fc1_engine_mode_layer')(x)
+        fc2_engine_mode_layer=Dense(4096,activation='relu',name='fc2_engine_mode_layer')(fc1_engine_mode_layer)
         advantage_engine_mode_layer=Dense(self.num_action_space[2],activation='softplus',name='advantage_engine_mode_layer')(fc2_engine_mode_layer)
-        fc1_brake_mode_layer=Dense(1024,activation='relu',name='fc1_brake_mode_layer')(x)
-        fc2_brake_mode_layer=Dense(1024,activation='relu',name='fc2_brake_mode_layer')(fc1_brake_mode_layer)
+        fc1_brake_mode_layer=Dense(4096,activation='relu',name='fc1_brake_mode_layer')(x)
+        fc2_brake_mode_layer=Dense(4096,activation='relu',name='fc2_brake_mode_layer')(fc1_brake_mode_layer)
         advantage_brake_mode_layer=Dense(self.num_action_space[3],activation='softplus',name='advantage_brake_mode_layer')(fc2_brake_mode_layer)
-        fc1_value_layer=Dense(1024,activation='relu',name='fc1_value_layer')(x)
-        fc2_value_layer=Dense(1024,activation='relu',name='fc2_value_layer')(fc1_value_layer)
+        fc1_value_layer=Dense(4096,activation='relu',name='fc1_value_layer')(x)
+        fc2_value_layer=Dense(4096,activation='relu',name='fc2_value_layer')(fc1_value_layer)
         value_layer=Dense(1,activation='relu',name='value_layer')(fc2_value_layer)
         Q_tyre_set_layer=tf.add(value_layer,tf.subtract(advantage_tyre_set_layer,tf.reduce_mean(advantage_tyre_set_layer,axis=1,keepdims=True,name='advantage_tyre_set_mean_layer'),name='advantage_tyre_set_subtract_layer'),name='Q_tyre_set_layer')
         Q_pit_next_lap_layer=tf.add(value_layer,tf.subtract(advantage_pit_next_lap_layer,tf.reduce_mean(advantage_pit_next_lap_layer,axis=1,keepdims=True,name='advantage_pit_next_lap_mean_layer'),name='advantage_pit_next_lap_subtract_layer'),name='Q_pit_next_lap_layer')
@@ -82,8 +78,6 @@ class BranchingDuelingDQNAgent:
 
         model=Model(input_layer,[Q_tyre_set_layer,Q_pit_next_lap_layer,Q_engine_mode_layer,Q_brake_mode_layer])
         model.compile(loss='mean_squared_error',optimizer='adam')
-
-        model.summary()
 
         return model
 
