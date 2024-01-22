@@ -28,14 +28,14 @@ from models.racetrack import RaceTrack
 from models.f1_simulation import F1Simulation
 from utils.visualization import F1SimVisualization
 
-BATCH_SIZE=128
-MEMORY_SIZE=66*28*10
+BATCH_SIZE=256
+MEMORY_SIZE=66*28*15
 MAX_EPISODES=10000
 MAX_STEPS=66*28
 REWARD_DISCOUNT_FACTOR=0.95
-TARGET_NETWORK_UPDATE_INTERVAL=28*45
+TARGET_NETWORK_UPDATE_INTERVAL=28*66
 epsilon=1
-epsilon_decay_factor=1-5e-6
+epsilon_decay_factor=1-1e-5
 epsilon_min=0.01
 
 class BranchingDuelingDQNAgent:
