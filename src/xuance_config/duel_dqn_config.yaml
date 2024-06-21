@@ -1,0 +1,51 @@
+agent: "Duel_DQN"
+env_name: "f1_env"
+env_id: "f1_env1"
+vectorize: "SubprocVecEnv"
+policy: "Duel_Q_network"
+representation: "Basic_MLP"
+runner: "DRL"
+device: "cpu"
+render: False
+render_mode: 
+fps:
+num_envs: 24
+test_mode: False
+
+logger: "wandb"
+project_name: "simple_f1_strategy_optimization"
+wandb_user_name: "kawin7538"
+
+representation_hidden_size: [512, 512, ]
+q_hidden_size: [512, 512, ]
+activation: 'tanh'
+
+seed: 1
+parallels: 24
+buffer_size: 1000008
+batch_size: 128
+learning_rate: 0.0001
+gamma: 0.99
+
+start_greedy: 0.99
+end_greedy: 0.01
+decay_step_greedy: 30000000
+sync_frequency: 1840
+# training_frequency: 616
+training_frequency: 1
+running_steps: 50000000
+start_training: 1000
+
+use_grad_clip: False  # gradient normalization
+grad_clip_norm: 0.5
+use_actions_mask: False
+use_obsnorm: False
+use_rewnorm: False
+obsnorm_range: 5
+rewnorm_range: 5
+
+test_steps: 10000
+eval_interval: 50000
+test_episode: 1
+log_dir: "./logs/dueldqn/"
+model_dir: "./models/dueldqn/"

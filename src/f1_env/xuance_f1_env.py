@@ -9,15 +9,16 @@ from xuance.environment import RawEnvironment
 from models.racetrack import RaceTrack
 from models.car import Car, DICT_TYRE_SET, DICT_ENGINE_MODE, DICT_BRAKE_MODE
 
-LIST_ACTIONS=product(range(len(DICT_TYRE_SET['list_tyre_set_name'])),[0,1],range(len(DICT_ENGINE_MODE['list_engine_mode_name'])),range(len(DICT_BRAKE_MODE['list_brake_mode_name'])))
+LIST_ACTIONS=list(product(range(len(DICT_TYRE_SET['list_tyre_set_name'])),[0,1],range(len(DICT_ENGINE_MODE['list_engine_mode_name'])),range(len(DICT_BRAKE_MODE['list_brake_mode_name']))))
 
-class F1Env(RawEnvironment):
-    def __init__(self) -> None:
+class XuanceF1Env(RawEnvironment):
+    def __init__(self, env_config) -> None:
 
         self.car=Car()
         self.racetrack=RaceTrack()
         self.number_of_laps=66
         self.num_stopwatch_all_laps=self.number_of_laps*self.racetrack.num_stopwatch
+        self.max_episode_steps=self.num_stopwatch_all_laps
 
         # action_space, 4 aspects, tyres next lap, pit next lap, engine mode, brake mode
         # self.action_space=spaces.MultiDiscrete([len(DICT_TYRE_SET['list_tyre_set_name']),2,len(DICT_ENGINE_MODE['list_engine_mode_name']),len(DICT_BRAKE_MODE['list_brake_mode_name'])])
@@ -124,7 +125,7 @@ class F1Env(RawEnvironment):
             self.dnf=True
             terminated=True
             # reward=-(1e9+sum([1 for val in self.list_time_usage_all_stopwatches if val==None]))
-            reward=-(1e9)
+            reward=-sum([1e6 for val in self.list_time_usage_all_stopwatches if val==None])
             self.state=np.array([DICT_TYRE_SET['list_tyre_set_name'].index(self.car.tyres.tyre_set_name),self.car.tyres.tyre_temperature_celcius,self.car.tyres.tyre_reliability_percent,self.car.engine.engine_temperature_celcius,self.car.engine.engine_reliability_percent,self.car.engine.engine_fuel_volume_kg,self.car.brakes.brake_temperature_celcius,self.car.brakes.brake_reliability_percent,self.car_in_pitlane,self.lap_idx,self.stopwatch_idx,self.num_stopwatch_all_laps-self.lap_stopwatch_idx])
             return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
         # firstly init first stint for lap 0 and stopwatch 0
@@ -156,7 +157,7 @@ class F1Env(RawEnvironment):
             self.dnf=True
             terminated=True
             # reward=-(1e9+sum([1 for val in self.list_time_usage_all_stopwatches if val==None]))
-            reward=-(1e9)
+            reward=-sum([1e6 for val in self.list_time_usage_all_stopwatches if val==None])
             self.state=np.array([DICT_TYRE_SET['list_tyre_set_name'].index(self.car.tyres.tyre_set_name),self.car.tyres.tyre_temperature_celcius,self.car.tyres.tyre_reliability_percent,self.car.engine.engine_temperature_celcius,self.car.engine.engine_reliability_percent,self.car.engine.engine_fuel_volume_kg,self.car.brakes.brake_temperature_celcius,self.car.brakes.brake_reliability_percent,self.car_in_pitlane,self.lap_idx,self.stopwatch_idx,self.num_stopwatch_all_laps-self.lap_stopwatch_idx])
             return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
         # measure time usage
@@ -201,7 +202,7 @@ class F1Env(RawEnvironment):
             if len(set(self.list_tyre_setting_all_laps))<=1:
                 terminated=True
                 self.dnf=True
-                reward=-(1e9)
+                reward=-5e5
             else:
                 is_done=True
                 dict_info['overall_time']=sum(self.list_time_usage_all_stopwatches)
