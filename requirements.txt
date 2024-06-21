@@ -3,6 +3,7 @@ mealpy
 plotly
 kaleido
 gymnasium
-tensorflow
+# tensorflow
 tqdm
 wandb
+xuance[torch]
